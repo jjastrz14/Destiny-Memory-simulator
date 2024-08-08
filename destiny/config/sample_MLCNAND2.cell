@@ -1,0 +1,16 @@
+-MemCellType: MLCNAND
+-MemCellLevel: MLC
+-CellArea (F^2): 6
+-CellAspectRatio: 1
+
+-GateCouplingRatio: 0.7
+
+-FlashEraseTime (ms): 2
+-FlashProgramTime (us): 680
+
+-FlashEraseVoltage (V): 16
+-FlashProgramVoltage (V): 6
+-FlashPassVoltage (V): 3.8
+
+-ReadMode: voltage  
+-ReadVoltage (V): 0.5

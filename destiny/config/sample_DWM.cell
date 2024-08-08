@@ -1,0 +1,30 @@
+//CELL FILE FOR DWM(RACETRACK)
+
+-MemCellType: DWM
+-CellArea (F^2): 4
+-CellAspectRatio: 1
+
+-ResistanceOn (ohm): 6000
+-ResistanceOff (ohm): 12000
+
+-ReadMode: current
+-ReadVoltage (V): 0.2
+
+-ResetMode: current
+-ResetCurrent (uA): 300
+-ResetPulse (ns): 4.6
+
+-SetMode: current
+-SetCurrent (uA): 300
+-SetPulse (ns): 4.6
+
+-TapeLength (bit): 64
+-PortDistance (bit): 8
+-TapePerGroup: 4
+
+-ShiftCurrent (uA): 145
+-ShiftPulse (ns): 2
+
+-AccessType: CMOS
+-VoltageDropAccessDevice (V): 0.15
+-AccessCMOSWidth (F): 8.5

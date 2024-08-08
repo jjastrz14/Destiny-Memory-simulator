@@ -1,0 +1,182 @@
+DESTINY : 3D dEsign-Space exploraTIon Tool for SRAM, eDRAM and Non-volatile memorY
+
+Indian Institute of Technology, Hyderabad, India
+University of Pittsburgh, USA
+Oak Ridge National Laboratory, USA
+ 
+ Mailing list: destiny-help@elist.ornl.gov
+Archive of previous conversations: https://elist.ornl.gov/pipermail/destiny-help/
+ 
+
+### Overview
+
+DESTINY is an acronym for 3D dEsign-Space exploraTIon Tool for SRAM, eDRAM and Non-volatile memorY. 
+In its purpose, DESTINY is similar to CACTI, CACTI-3DD or NVSim. 
+
+DESTINY can model:
+ * (2D/3D) SRAM and eDRAM
+ * (2D/3D, SLC/MLC) STT-RAM, ReRAM and PCM
+ * (2D, SLC/MLC) SOT-RAM, Flash, DWM
+
+Features of DESTINY:
+ * Can model 22nm to 180nm technology nodes
+ * It can model both conventional and emerging memories
+ * Validated against several commercial prototypes
+ * A comprehensive modeling tool
+
+DESTINY utilizes the framework for modeling 2D SRAM and 2D NVM from NVSim.
+Also, the coarse- and fine-grained TSV (through silicon via) models are utilized from CACTI-3DD. 
+
+### Documentation
+
+The file ''DESTINY_Documentation'' under folder 'Doc' provides a brief manual of DESTINY. 
+It shows an example configuration file and the corresponding output of DESTINY, 
+which may be especially useful for a user who wants to get an overview of DESTINY 
+even before installing it. The manual also provides ideas and suggestions for 
+integrating DESTINY into architectural simulators and is expected to answer 
+some of the ``frequently asked questions'' related to DESTINY.
+
+### Sponsors
+ * Science and Engineering Research Board (SERB), India, award number ECR/2017/000622
+ * Office of Advanced Scientific Computing Research in 
+the U.S. Department of Energy 
+  
+------------------------------------------------------
+###  Relevant papers, acknowledgement and contact information
+
+If you use DESTINY in a research publication, we request you to cite any of the these publications. 
+
+* Sparsh Mittal, Rujia Wang, Jeffrey Vetter, "DESTINY: A Comprehensive Tool with 3D and Multi-level Cell
+Memory Modeling Capability", J. Low Power Electron. Appl. (JLPEA), 2017
+
+* Sparsh Mittal, Matthew Poremba,  Jeffrey S Vetter and Yuan Xie, "Exploring Design Space 
+of 3D NVM and eDRAM Caches Using DESTINY Tool", ORNL Technical Report no. ORNL/TM-2014/636, 2014
+(available here http://goo.gl/qzyWFE). 
+
+ * Matthew Poremba, Sparsh Mittal, Dong Li, Jeffrey S Vetter and Yuan Xie, "DESTINY: A Tool for 
+Modeling Emerging 3D NVM and eDRAM caches",  Design Automation and Test in Europe (DATE), 2015.
+(available here http://goo.gl/3nKAM2)
+
+The JLPEA 2017 paper describes DESTINY in full detail and also shows its use in performing design-space exploration.
+
+
+Support for DESTINY is provided on a best-effort basis. For receiving announcements,
+ or sending questions and comments, please subscribe to the mailing list
+ destiny-help@elist.ornl.gov by visiting the following 
+webpage: https://elist.ornl.gov/mailman/listinfo/destiny-help
+
+
+-------------------------------------------------------
+
+###  Compiling DESTINY
+
+DESTINY is developed in C++. It can be compiled on both Microsoft Windows and Unix-like OSes. 
+To build the tool under Linux, simply issue
+
+     $ make
+
+-------------------------------------------------------
+###  Running DESTINY
+
+DESTINY must be compiled with a user-specified configuration files, as follows:
+
+      $ ./destiny <file>.cfg
+
+For above code to run, the file  <file>.cfg should be present in the same folder as where "destiny" binary is present. Also, <file>.cfg may refer to another *cell file which will be read by the destiny binary. That *cell file should be present in the same folder also. 
+
+If this is not the case, then, assume that <file>.cfg is present in the topfolder/config folder, whereas "destiny" binary is present in "topfolder". Then do: 
+
+      $ cd config
+      $ ../destiny <file>.cfg
+-------------------------------------------------------
+###  The meaning and possible values of parameters added in DESTINY
+
+The following 3 parameters are applicable only to DWM:
+-TapeLength - Length of DWM tape. This parameter determines how many tapes are needed for a given cache capacity. Also, the shift latency/energy is proportional to the length of DWM tape.
+-PortDistance - This determine the maximum domains that need to be shifted on each read/write operation. It depends on the number of read and write ports in each tape. It also determines the  overhead region at the top/bottom of the tape reserved for shift-out bits.
+-TapePerGroup - The number of  tapes that are vertically grouped into one macro unit. This parameter determines the cell area efficiency
+
+
+-MemCellLevel - Number of bits in the cell (can be omitted for SLC)
+SLC: for 1-bit cell
+MLC: for 2-bit cell
+TLC: for 3-bit cell
+
+-ReadScheme - The reading scheme used (can be omitted for SLC)
+ReadAndCompare: For MLC reads
+NormalRead: For SLC reads
+
+-WriteScheme - The write scheme used (can be omitted for SLC)
+SetBeforeReset: for MLC PCM/ReRAM
+ResetBeforeSet: for MLC PCM/ReRAM
+EraseBeforeSet: for MLC flash
+EraseBeforeReset: for MLC flash
+WriteAndVerify: generic for MLC writes
+
+-SecondOptimizationTarget: Allows the user to specify a secondoptimization target 
+Explanation: Since DESTINY covers a large design space, we allow a user flexibility to refine the results. The user can specify "-OptimizationTarget" to specify the first optimization target (e.g., area, leakage power, read latency etc.). Then, if multiple configs are almost equal on this target (i.e., their difference is less than an epsilon), then they can be compared on this second optimization target. This may help the user in potentially finding better matches than a single optimization target only.
+
+-StackedDieCount - Number of dies over which the memory is distributed
+
+-PartitionGranularity - 
+0: Coarse granularity: This assumes that address, control, and data signals are 
+broadcast to all stacked dies and decoded on the destination die. 
+1: Fine granularity: This assumes that address signals are pre-decoded on a 
+separate logic layer and the undecoded address signals are broadcast to all 
+stacked dies. The control and data are still shared. 
+Note that the total number of dies in fine granularity is StackedDieCount + 1
+
+-LocalTSVProjection: 
+0: Use aggressive TSV projection from ITRS for local TSVs.
+1: Use conservative values from industry measurements for local TSVs
+
+Local TSVs are used in fine granularity partitioning to route pre-decoded signals
+
+
+-GlobalTSVProjection: 
+0: Use aggressive TSV projection from ITRS for global TSVs
+1: Use conservative values from industry measurements for global TSVs
+
+Global TSVs are used in both fine and coarse granularity partitioning to 
+route broadcast signals (e.g., data and control signals)
+
+
+-TSVRedundancy: Any floating point value from 1.0 or higher (reasonably, about 
+2.0 is the maximum). ((TSVRedundancy - 1)*100) is the percentage of extra TSVs 
+assumed for each TSV cluster for fault tolerance / TSV yield issues.
+
+
+-MonolithicStackCount: Integer value e.g., 1, 2, 4. This is the number of memory 
+layers on the *same* die which are monolithically stacked.
+
+Other important parameters added:
+
+-AllowDifferenceTagTech: Allow the tag array of a cache to be a different 
+technology than the data array (e.g., SRAM tag array with STT-RAM data array).
+
+-MemoryCellInputFile: This parameter can be specified multiple times 
+to consider multiple different technologies in the same simulation run. This is useful for design-space exploration studies (see our paper)
+
+-PrintAllOptimals: Print the optimal design for each optimization 
+target (can be used to find the best of multiple technology inputs). This is useful for design-space exploration studies (see our paper)
+
+-ForceBank3D: Dimensions of each bank in terms of number of Mats in each direction.
+-ForceBank3DA: Same as ForceBank3D, except forcing the number of active Mats is not required
+-ForceBankA: Same as ForceBank in NVSim, except forcing the number of active Mats is not required.
+-ForceMatA: Same as ForceMat in NVSim, except forcing the number of active Subarrays is not required.
+
+ 
+
+-------------------------------------------------------
+
+###  Hacking DESTINY code and possible extensions
+
+We expect that end-users of DESTINY should be able to easily modify it to add 
+various features. We are also working to add new features to it and provide a documentation.
+
+We welcome any contribution from the end-users of DESTINY. 
+
+
+### EOF
+
+

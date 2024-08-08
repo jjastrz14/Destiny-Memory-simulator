@@ -1,0 +1,33 @@
+#MLC PCM
+
+-MemCellType: PCRAM
+-MemCellLevel: MLC
+
+//-ProcessNode: 65
+-ProcessNode: 45
+-CellArea (F^2): 4
+-CellAspectRatio: 1
+
+-ResistanceOn (ohm): 1000
+-ResistanceOff (ohm): 100000
+
+-ReadMode: current
+-ReadVoltage (V): 1.1
+-ReadPulse (ns): 10
+-ReadPower (uW): 44
+-AverageIterations: 3
+-Interval (ns): 1
+
+-ResetMode: current
+-ResetVoltage (V): 1.6
+-ResetCurrent (uA): 250
+-ResetPulse (ns): 50
+
+-SetMode: current
+-SetVoltage (V): 1.6
+-SetCurrent (uA): 150
+-SetPulse (ns): 150
+
+-AccessType: CMOS
+-VoltageDropAccessDevice (V): 0.15
+-AccessCMOSWidth (F): 1

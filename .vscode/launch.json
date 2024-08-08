@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+
+    {
+      "name": "clang++ - Build and debug active file",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceFolder}/destiny", 
+      "args": ["${workspaceFolder}/destiny/config/sample_PCRAM_NIMBLE_single_bank_28_debug.cfg"], 
+      "cwd": "${workspaceFolder}",
+      "preLaunchTask": "clang++ build active file"
+    }
+  ]
+}
