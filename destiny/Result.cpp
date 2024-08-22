@@ -1350,8 +1350,9 @@ void Result::printToCsvFile(ofstream &outputFile) {
 
 void Result::print_to_csv(ofstream &outputFile, int indent) {
 	//Cell Technology,Cell Area (F^2),Cell Aspect Ratio,Cell Turned-On Resistance,Cell Turned-Off Resistance,Read Mode,Read Current,Reset Mode,Reset Current,Reset Pulse,Set Mode,Set Current,Set Pulse,Access Type
+	//HERE ADD COLUMNS WHEN YOU WANT SOME MORE INFO!
 	outputFile<< "Optimization Target"
-			<< ",Bank Organization,Row Activation,Column Activation,Mat Organization,Row Activation,Column Activation,Subarray Size,Senseamp Mux,Output Level-1 Mux,Output Level-2 Mux"
+			<< ",Bank Organization,Bank Row Activation,Bank Column Activation,Mat Organization,Mat Row Activation,Mat Column Activation,Subarray Size,Senseamp Mux,Output Level-1 Mux,Output Level-2 Mux"
 			<< ",Local Wire Type,Local Wire Repeater Type,Local Wire Low Swing,Global Wire Type,Global Wire Repeater Type,Global Wire Low Swing,Buffer Design Style"
 			<< ",Height Total ,Width Total ,Total Area ,Height Mat,Width Mat, Mat Area ,Mat Efficiency,Height Subarray, Width Subarry,Subarray Area,Subarray Efficiency,Area Efficiency "
 			<< ",Read Latency,TSV Latency,H-Tree Latency,Mat Latency,Predecoder Latency,Subarray Latency,Row Decoder Latency,Bitline Latency (ns:ns:ns),Senseamp Latency,Mux Latency,Precharge Latency,Read Pulse,Comparator Latency"
@@ -1567,10 +1568,10 @@ void Result::print_to_csv(ofstream &outputFile, int indent) {
 	else
 		outputFile << string(indent, ' ') << TO_SECOND(bank->routingReadLatency) << ",";
 
-	outputFile << string(indent, ' ') << TO_SECOND(bank->mat.readLatency) << ","; //Mat Latency (ns)
-	outputFile << string(indent, ' ') << TO_SECOND(bank->mat.predecoderLatency) << ","; //Predecoder Latency (ns)
-	outputFile << string(indent, ' ') << TO_SECOND(bank->mat.subarray.readLatency) << ","; //Subarray Latency (ns),
-	outputFile << string(indent, ' ') << TO_SECOND(bank->mat.subarray.rowDecoder.readLatency) << ","; //Row Decoder Latency (ns)
+	outputFile << string(indent, ' ') << TO_SECOND(bank->mat.readLatency) << ","; //Mat read Latency (ns)
+	outputFile << string(indent, ' ') << TO_SECOND(bank->mat.predecoderLatency) << ","; //Predecoder read Latency (ns)
+	outputFile << string(indent, ' ') << TO_SECOND(bank->mat.subarray.readLatency) << ","; //Subarray read Latency (ns),
+	outputFile << string(indent, ' ') << TO_SECOND(bank->mat.subarray.rowDecoder.readLatency) << ","; //Row Decoder readLatency (ns)
 	outputFile << string(indent, ' ') << TO_SECOND(bank->mat.subarray.bitlineDelay) << ":"<<TO_SECOND(bank->mat.subarray.bitlineDelayOn)<<":"<< TO_SECOND(bank->mat.subarray.bitlineDelayOff)<< ","; //Bitline Latency (ns,ns,ns)
 	
 	if (inputParameter->internalSensing) //Senseamp Latency (ns)
@@ -1761,7 +1762,7 @@ void Result::print_to_csv(ofstream &outputFile, int indent) {
 													+ bank->mat.subarray.senseAmpMuxLev1Decoder.readDynamicEnergy
 													+ bank->mat.subarray.senseAmpMuxLev2Decoder.readDynamicEnergy) << ","; //Mux Decoder Read Dynamic Energy (pJ)
 	if (cell->memCellType == PCRAM || cell->memCellType == FBRAM || cell->memCellType == MRAM || cell->memCellType == memristor || cell->memCellType ==DWM) {
-		outputFile << string(indent, ' ') << TO_JOULE(bank->mat.subarray.cellReadEnergy) << ",";
+		outputFile << string(indent, ' ') << TO_JOULE(bank->mat.subarray.cellReadEnergy) << ","; //Cell Read Dynamic Energy (pJ)
 	}
 	else 
 		outputFile << string(indent, ' ') << "N/A" << ",";

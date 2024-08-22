@@ -8,12 +8,12 @@
 
 -CellArea (F^2): 46	// F^2 = 25 con ratio = 2 è ok per il 90nm
 -CellAspectRatio: 2
-
+//Resistance is goood
 -ResistanceOn (ohm): 10000
 -ResistanceOff (ohm): 1000000
 
 -ReadMode: voltage
--ReadCurrent (uA): 40
+-ReadCurrent (uA): 30
 -ReadEnergy (pJ): 2
 
 -ResetMode: current
