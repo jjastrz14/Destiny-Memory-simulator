@@ -836,8 +836,10 @@ void SubArray::CalculatePower() {
 				readDynamicEnergy *= numColumn;
 				//readDynamicEnergy *= numColumn / muxSenseAmp / muxOutputLev1 / muxOutputLev2;
 			} else {						/* voltage-sensing */
+				//readDynamicEnergy = (capCellAccess + capBitline + bitlineMux.capForPreviousPowerCalculation) *
+				//		(voltagePrecharge * voltagePrecharge - voltageMemCellOn * voltageMemCellOn ) * numColumn;
 				readDynamicEnergy = (capCellAccess + capBitline + bitlineMux.capForPreviousPowerCalculation) *
-						(voltagePrecharge * voltagePrecharge - voltageMemCellOn * voltageMemCellOn ) * numColumn;
+						(voltagePrecharge * voltagePrecharge - voltageMemCellOn * voltageMemCellOn ) * numColumn / muxSenseAmp / muxOutputLev1 / muxOutputLev2;
 			}
 
 			double singleCellReadEnergy = 0;

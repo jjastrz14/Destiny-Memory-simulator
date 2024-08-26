@@ -12,7 +12,7 @@
 -ResistanceOn (ohm): 10000
 -ResistanceOff (ohm): 1000000
 
--ReadMode: voltage
+-ReadMode: current //volatege
 -ReadCurrent (uA): 30
 -ReadEnergy (pJ): 2
 

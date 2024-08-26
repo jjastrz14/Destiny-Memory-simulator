@@ -226,7 +226,8 @@ void MemCell::ReadCellFromFile(const string & inputFile)
 
 		if (!strncmp("-ReadMode", line, strlen("-ReadMode"))) {
 			sscanf(line, "-ReadMode: %s", tmp);
-			if (!strcmp(tmp, "voltage"))
+			//"Check if the string in tmp is equal to the string 'voltage', and then negate the result."
+			if (!strcmp(tmp, "voltage")) 
 				readMode = true;
 			else
 				readMode = false;
