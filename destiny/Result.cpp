@@ -633,10 +633,34 @@ void Result::print(int indent) {
         cout << string(indent, ' ') << " - Shift Latency = " << TO_SECOND(bank->shiftLatency) << endl;
     }
 
+	//old version: 
+	//double readBandwidth = (double)bank->blockSize /
+	//		(bank->mat.subarray.readLatency - bank->mat.subarray.rowDecoder.readLatency
+	//		+ bank->mat.subarray.precharger.readLatency) / 8;
+
+	// numReadoudts = numcol/wordwidth_per_subarray_active
+	double numReadouts =  (double)bank->mat.subarray.numColumn / ((double)bank->blockSize / 
+	(bank->numActiveMatPerColumn * bank->numActiveMatPerRow *  bank->numActiveSubarrayPerRow * bank->numActiveSubarrayPerColumn)) ;
+	cout << string(indent, ' ') << "- OUR number consecutive Readouts per subarray  = " << numReadouts << endl;
+	//
+	double avg_rowDecoder_latency = (double)bank->mat.subarray.rowDecoder.readLatency/numReadouts;
+	cout << string(indent, ' ') << "- OUR avg row decoder Latency   = " << avg_rowDecoder_latency << endl;
+
+	// our correction:
+	//Wordwidth / (subarray_latency - rowDecoder_latency + avg_rowDecoder_latency + Precharger_latency) / 8 (B/s)
+	//avg version: 
+
 	double readBandwidth = (double)bank->blockSize /
 			(bank->mat.subarray.readLatency - bank->mat.subarray.rowDecoder.readLatency
-			+ bank->mat.subarray.precharger.readLatency) / 8;
+			+ avg_rowDecoder_latency + bank->mat.subarray.precharger.readLatency) / 8;
+
 	cout << string(indent, ' ') << " - Read Bandwidth  = " << TO_BPS(readBandwidth) << endl;
+
+	double readBandwidth_per_mat = (((double)bank->blockSize /(bank->numActiveMatPerColumn * bank->numActiveMatPerRow)) /
+			(bank->mat.subarray.readLatency - bank->mat.subarray.rowDecoder.readLatency
+			+ avg_rowDecoder_latency + bank->mat.subarray.precharger.readLatency) / 8);
+
+	cout << string(indent, ' ') << " OUR - Read Bandwidth per mat = " << TO_BPS(readBandwidth_per_mat) << endl;
         //cout<<" blocksize "<<bank->blockSize<<" rL "<<bank->mat.subarray.readLatency * 1e6<<" rL1 "<<bank->mat.subarray.rowDecoder.readLatency * 1e6<<" rL2 "<<bank->mat.subarray.precharger.readLatency * 1e6<<"\n";
 	double writeBandwidth = (double)bank->blockSize /
 			(bank->mat.subarray.writeLatency) / 8;
@@ -870,6 +894,10 @@ void Result::print(int indent) {
         cout << string(indent, ' ') << " - Shift Dynamic Energy = " << TO_JOULE(bank->shiftDynamicEnergy) << endl;
     }
 
+	//OUR CORRECTION
+	// Dynamic read power (J/B) readBandwidth * (readDynamicEnergy / per byte)
+	double dynamic_read_power = readBandwidth * (bank->readDynamicEnergy / ((double)bank->blockSize / 8) );
+	cout << string(indent, ' ') << " OUR - Read Dynamic Power = " << TO_WATT(dynamic_read_power) << endl;
 }
 
 void Result::printAsCache(Result &tagResult, CacheAccessMode cacheAccessMode) {
