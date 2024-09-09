@@ -3,21 +3,21 @@ import glob
 import re
 
 # Get all CSV files matching the pattern
-file_pattern = 'bank_PCRAM_28_*x*_*MB_*_word.csv'
+file_pattern = 'bank_PCRAM_28_*x*_*MB_*_word_*.csv'
 file_list = glob.glob(file_pattern)
 
 # Initialize an empty list to store dataframes
 dfs = []
 
 # Regular expression pattern to extract n, r, and k values
-pattern = r'bank_PCRAM_28_(\d+)x\1_(\d+)MB_(\d+)_word\.csv'
+pattern = r'bank_PCRAM_28_(\d+)x(\d+)_(\d+)MB_(\d+)_word_(\d+)\.csv'
 
 # Process each file
 for file in file_list:
     # Extract n, r, and k values from the filename
     match = re.search(pattern, file)
     if match:
-        n, r, k = map(int, match.groups())
+        n, _, r, _, k = map(int, match.groups()) 
         
         # Read the CSV file, properly handling 'N\A' values and ensuring all columns are read
         df = pd.read_csv(file, na_values=['N\A'], keep_default_na=False, header=0, index_col=False)
@@ -29,8 +29,7 @@ for file in file_list:
         df.insert(0, 'wordwidth', k)
         df.insert(0, 'nxn', n)
         df.insert(0, 'size MB', r)
-        
-   
+    
         # Append to the list of dataframes
         dfs.append(df)
 

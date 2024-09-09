@@ -1382,13 +1382,18 @@ void Result::print_to_csv(ofstream &outputFile, int indent) {
 	outputFile<< "Optimization Target"
 			<< ",Bank Organization,Bank Row Activation,Bank Column Activation,Mat Organization,Mat Row Activation,Mat Column Activation,Subarray Size,Senseamp Mux,Output Level-1 Mux,Output Level-2 Mux"
 			<< ",Local Wire Type,Local Wire Repeater Type,Local Wire Low Swing,Global Wire Type,Global Wire Repeater Type,Global Wire Low Swing,Buffer Design Style"
-			<< ",Height Total ,Width Total ,Total Area ,Height Mat,Width Mat, Mat Area ,Mat Efficiency,Height Subarray, Width Subarry,Subarray Area,Subarray Efficiency,Area Efficiency "
-			<< ",Read Latency,TSV Latency,H-Tree Latency,Mat Latency,Predecoder Latency,Subarray Latency,Row Decoder Latency,Bitline Latency (ns:ns:ns),Senseamp Latency,Mux Latency,Precharge Latency,Read Pulse,Comparator Latency"
+			<< ",Height Total ,Width Total ,Total Area ,Height Mat,Width Mat, Mat Area, Mat Efficiency,Height Subarray, Width Subarry,Subarray Area,Subarray Efficiency"
+			<< ",TSV Area,Logic Layer Area,Area Efficiency"
+			<< ",Read Latency,TSV Read Latency, H-Tree Read Latency,Bus Read Latency,Mat Read Latency,Predecoder Read Latency,Subarray Read Latency,Row Read Decoder Latency,Bitline Read Latency (ns:ns:ns),Senseamp read Latency,Muxread Latency,Precharge read Latency,Read Pulse,Comparator read Latency"
 			<< ",Write Total Latency,RESET Latency,RESET Soft Latency,SET Latency,SET Soft Latency"
-			<< ",Read Bandwidth ,Write Bandwidth"
-			<< ",Read Dynamic Energy"
-			<< ",Write Dynamic Energy,RESET Dynamic Energy,RESET Soft Dynamic Energy,SET Dynamic Energy,SET Soft Dynamic Energy"
-			<< ",Leakage Power,TSV Leakage Power,H-Tree Leakage Power,Mat Leakage Power per mat"
+			<< ",Read Bandwidth,Read Bandwidth per mat,Write Bandwidth"
+			<< ",Read Dynamic Energy,TSV Read Dynamic Energy,H-tree Read Dynamic Energy,Non-H-Tree Read Dynamic Energy,Mat Read Dynamic Energy,Predecoder Read Dynamic Energy,Subarray Read Dynamic Energy,Row Decoder Read Dynamic Energy,Mux Decoder Read Dynamic Energy,Cell Read Dynamic Energy,Senseamp Read Dynamic Energy,Mux Read Dynamic Energy,Precharge Read Dynamic Energy"
+			<< ",Set+Reset Dynamic Energy,Write Dynamic Energy,RESET Dynamic Energy,RESET Soft Dynamic Energy"
+			<< ",TSV Reset Dynamic Energy, H-Tree Reset Dynamic Energy,BUS Reset Dynamic Energy, Mat Reset Dynamic Energy, Predecoder Reset Dynamic Energy"
+			<< ",Subarray Read Dynamic Energy,Row Decoder Read Dynamic Energy,Mux Decoder Read Dynamic Energy,Mux Dynamic Energy,Cell RESET Read Dynamic Energy,Single Cell RESET Read Energy"
+			<< ",Set Dynamic Energy, Set Soft Dynamic Energy,H-Tree Set Dynamic Energy,Bus Set Dynamic Energy,Mat Set Dynamic Energy,Predecoder Dynamic Energy"
+			<< ",Subarray Set Dynamic Energy, Row Decoder Set Dynamic Energy, Mux Decoder Set Dynamic Energy, Mux Set Dynamic Energy, Cell SET Dynamic Energy,Single Cell SET Energy "
+			<< ",Leakage Power,TSV Leakage Power,H-Tree Leakage Power,Bus Leakage Power,Mat Leakage Power per mat,Read Dynamic Power"
 			<< endl;
 
 	outputFile << string(indent, ' ') << printOptimizationTarget()<<","; //Optimization Target
@@ -1399,12 +1404,12 @@ void Result::print_to_csv(ofstream &outputFile, int indent) {
               outputFile << string(indent, ' ') << bank->numActiveMatPerColumn << " / " << bank->numRowMat << " x 1"<<",";//Row Activation
               outputFile << string(indent, ' ') << bank->numActiveMatPerRow << " / " << bank->numColumnMat << " x 1"<<","; //Column Activation
        } else {
-              outputFile << string(indent, ' ') << bank->numRowMat << " x " << bank->numColumnMat<<","; //Bank Organization
+              outputFile << string(indent, ' ') << bank->numRowMat << " x " << bank->numColumnMat<<","; //Mat Organization
               outputFile << string(indent, ' ') << bank->numActiveMatPerColumn << " / " << bank->numRowMat<<","; //Row Activation
               outputFile << string(indent, ' ')  << bank->numActiveMatPerRow << " / " << bank->numColumnMat<<","; //Column Activation
        }
 
-	outputFile << string(indent, ' ') << bank->numRowSubarray << " x " << bank->numColumnSubarray<<","; //Mat Organization
+	outputFile << string(indent, ' ') << bank->numRowSubarray << " x " << bank->numColumnSubarray<<","; //Subarray Organization
 	outputFile << string(indent, ' ') << bank->numActiveSubarrayPerColumn << " / " << bank->numRowSubarray<<","; //Row Activation
 	outputFile << string(indent, ' ') << bank->numActiveSubarrayPerRow << " / " << bank->numColumnSubarray<<","; //Column Activation
 	outputFile << string(indent, ' ') << bank->mat.subarray.numRow << " Rows x " << bank->mat.subarray.numColumn << " Columns"<<","; //Subarray Size
@@ -1540,81 +1545,88 @@ void Result::print_to_csv(ofstream &outputFile, int indent) {
 		outputFile << string(indent, ' ') << "Balanced" << ",";
 	}
 
-	outputFile << string(indent, ' ') << TO_METER(bank->height) << ",";
-	outputFile << string(indent, ' ') << TO_METER(bank->width) << ",";
-	outputFile << string(indent, ' ') << TO_SQM(bank->area) << ",";
+	outputFile << string(indent, ' ') << TO_METER(bank->height) << ","; //Height Total
+	outputFile << string(indent, ' ') << TO_METER(bank->width) << ","; //Width Total
+	outputFile << string(indent, ' ') << TO_SQM(bank->area) << ","; //Total Area
 
-	outputFile << string(indent, ' ') << TO_METER(bank->mat.height) << ","; 
-	outputFile << string(indent, ' ') << TO_METER(bank->mat.width) << ","; 
-	outputFile << string(indent, ' ') << TO_SQM(bank->mat.area) << ","; 
+	outputFile << string(indent, ' ') << TO_METER(bank->mat.height) << ","; //Height Mat
+	outputFile << string(indent, ' ') << TO_METER(bank->mat.width) << ","; //Width Mat
+	outputFile << string(indent, ' ') << TO_SQM(bank->mat.area) << ","; //Mat Area
 
 	outputFile << string(indent, ' ') << cell->area * tech->featureSize * tech->featureSize
-			* bank->capacity / bank->numRowMat / bank->numColumnMat / bank->mat.area * 100 << "%" << ",";
+			* bank->capacity / bank->numRowMat / bank->numColumnMat / bank->mat.area * 100 << "%" << ","; //Mat Efficiency
 
-	outputFile << string(indent, ' ') << TO_METER(bank->mat.subarray.height) << ","; 
+	outputFile << string(indent, ' ') << TO_METER(bank->mat.subarray.height) << ","; //Height Subarray
 
-	outputFile << string(indent, ' ') << TO_METER(bank->mat.subarray.width) << ","; 
-	outputFile << string(indent, ' ') << TO_SQM(bank->mat.subarray.area) << ","; 
+	outputFile << string(indent, ' ') << TO_METER(bank->mat.subarray.width) << ","; //Width Subarry
+	outputFile << string(indent, ' ') << TO_SQM(bank->mat.subarray.area) << ","; //Subarray Area
 	
 	outputFile << string(indent, ' ') << cell->area * tech->featureSize * tech->featureSize * bank->capacity / bank->numRowMat
 			/ bank->numColumnMat / bank->numRowSubarray / bank->numColumnSubarray
-			/ bank->mat.subarray.area * 100 << "%" <<",";
+			/ bank->mat.subarray.area * 100 << "%" <<","; //Subarray Efficiency
 
-	/* uncomment and add columns in outputFile to get TSV area
     if (bank->stackedDieCount > 1 && bank->partitionGranularity == 0) {
-        outputFile << string(indent, ' ') << " |--- TSV Area      = " << TO_SQM(bank->tsvArray.area) << ",";
+        outputFile << string(indent, ' ') << TO_SQM(bank->tsvArray.area) << ","; //TSV Area 
     } else if (bank->stackedDieCount > 1 && bank->partitionGranularity == 1) {
         double totalTSVArea = bank->tsvArray.area + bank->mat.tsvArray.area
                               * bank->numColumnMat * bank->numRowMat;
         double areaLogicLayer = bank->mat.areaAllLogicBlocks * bank->numColumnMat
                               * bank->numRowMat;
 
-        outputFile << string(indent, ' ') << " |--- TSV Area      = " << TO_SQM(totalTSVArea) << ",";
-        outputFile << string(indent, ' ') << " |--- Logic Layer Area = " << TO_SQM(areaLogicLayer) << ",";
+        outputFile << string(indent, ' ') << TO_SQM(totalTSVArea) << ","; //TSV Area
+        outputFile << string(indent, ' ') << TO_SQM(areaLogicLayer) << ","; //Logic Layer Area
     }
-	*/
+	else {
+		outputFile << string(indent, ' ') << "N/A" << ","; //TSV Area
+		outputFile << string(indent, ' ') << "N/A" << ","; //Logic Layer Area
+	}
+
 
 	outputFile << string(indent, ' ') << cell->area * tech->featureSize * tech->featureSize
-			* bank->capacity / bank->area * 100 << "%" << ",";
+			* bank->capacity / bank->area * 100 << "%" << ","; //Area Efficiency
 
 	//Timing 
 	outputFile << string(indent, ' ') << TO_SECOND(bank->readLatency) << ","; //Read Latency (ns)
-    if (bank->stackedDieCount > 1 && bank->partitionGranularity == 0) { //TSV Latency (ns)
+    if (bank->stackedDieCount > 1 && bank->partitionGranularity == 0) { 
         double totalTSVLatency = (bank->tsvArray.readLatency + bank->tsvArray.writeLatency) * (bank->stackedDieCount-1);
-        outputFile << string(indent, ' ') << TO_SECOND(totalTSVLatency) << ",";
+        outputFile << string(indent, ' ') << TO_SECOND(totalTSVLatency) << ","; //TSV Latency (ns)
     } else if (bank->stackedDieCount > 1 && bank->partitionGranularity == 1) {
         double totalTSVLatency = bank->tsvArray.readLatency * (bank->stackedDieCount-1)
                                + bank->mat.tsvArray.writeLatency * (bank->stackedDieCount-1);
 
-        outputFile << string(indent, ' ') << TO_SECOND(totalTSVLatency) << ",";
+        outputFile << string(indent, ' ') << TO_SECOND(totalTSVLatency) << ","; //TSV Latency (ns)
     }
 	else 
 		outputFile << string(indent, ' ') << "N/A" << ",";
 
-	if (inputParameter->routingMode == h_tree) //H-Tree Latency (ns)
-		outputFile << string(indent, ' ') << TO_SECOND(bank->routingReadLatency) << ",";
-	else
-		outputFile << string(indent, ' ') << TO_SECOND(bank->routingReadLatency) << ",";
+	if (inputParameter->routingMode == h_tree) {
+		outputFile << string(indent, ' ') << TO_SECOND(bank->routingReadLatency) << ","; //H-Tree Latency (ns)
+		outputFile << string(indent, ' ') << "N/A" << ",";
+	}
+	else {
+		outputFile << string(indent, ' ') << "N/A" << ",";
+		outputFile << string(indent, ' ') << TO_SECOND(bank->routingReadLatency) << ","; //Bus Latency (ns)
+		}
 
 	outputFile << string(indent, ' ') << TO_SECOND(bank->mat.readLatency) << ","; //Mat read Latency (ns)
 	outputFile << string(indent, ' ') << TO_SECOND(bank->mat.predecoderLatency) << ","; //Predecoder read Latency (ns)
 	outputFile << string(indent, ' ') << TO_SECOND(bank->mat.subarray.readLatency) << ","; //Subarray read Latency (ns),
-	outputFile << string(indent, ' ') << TO_SECOND(bank->mat.subarray.rowDecoder.readLatency) << ","; //Row Decoder readLatency (ns)
-	outputFile << string(indent, ' ') << TO_SECOND(bank->mat.subarray.bitlineDelay) << ":"<<TO_SECOND(bank->mat.subarray.bitlineDelayOn)<<":"<< TO_SECOND(bank->mat.subarray.bitlineDelayOff)<< ","; //Bitline Latency (ns,ns,ns)
+	outputFile << string(indent, ' ') << TO_SECOND(bank->mat.subarray.rowDecoder.readLatency) << ","; //Row Decoder read Latency (ns)
+	outputFile << string(indent, ' ') << TO_SECOND(bank->mat.subarray.bitlineDelay) << ":"<<TO_SECOND(bank->mat.subarray.bitlineDelayOn)<<":"<< TO_SECOND(bank->mat.subarray.bitlineDelayOff)<< ","; //Bitline read Latency (ns,ns,ns)
 	
-	if (inputParameter->internalSensing) //Senseamp Latency (ns)
+	if (inputParameter->internalSensing) //Senseamp read Latency (ns)
 		outputFile << string(indent, ' ') << TO_SECOND(bank->mat.subarray.senseAmp.readLatency) << ",";
 	else 
 		outputFile << string(indent, ' ') << "N/A" << ",";
 
 	outputFile << string(indent, ' ') << TO_SECOND(bank->mat.subarray.bitlineMux.readLatency 
 													+ bank->mat.subarray.senseAmpMuxLev1.readLatency
-													+ bank->mat.subarray.senseAmpMuxLev2.readLatency) << ","; //Mux Latency (ns)
-	outputFile << string(indent, ' ') << TO_SECOND(bank->mat.subarray.precharger.readLatency) << ","; //Precharge Latency (ns)
+													+ bank->mat.subarray.senseAmpMuxLev2.readLatency) << ","; //Mux read Latency (ns)
+	outputFile << string(indent, ' ') << TO_SECOND(bank->mat.subarray.precharger.readLatency) << ","; //Precharge read Latency (ns)
 	outputFile << string(indent, ' ') << TO_SECOND(cell->readPulse) << ","; //Read Pulse (ns)
 
 	if (bank->mat.memoryType == tag && bank->mat.internalSenseAmp)
-		outputFile << string(indent, ' ') << TO_SECOND(bank->mat.comparator.readLatency) << ","; //comparator latency (ns)
+		outputFile << string(indent, ' ') << TO_SECOND(bank->mat.comparator.readLatency) << ","; //comparator read latency (ns)
 	else 
 		outputFile << string(indent, ' ') << "N/A" << ",";
 
@@ -1622,14 +1634,14 @@ void Result::print_to_csv(ofstream &outputFile, int indent) {
 	if (cell->memCellType == PCRAM || cell->memCellType == FBRAM || cell->memCellType ==MRAM ||
 			(cell->memCellType == memristor && (cell->accessType == CMOS_access || cell->accessType == BJT_access || cell->memCellLevel!=SLC))) {
 		outputFile << string(indent, ' ')  << TO_SECOND(bank->writeLatency) << ","; //Write Total Latency (ns)
-		outputFile << string(indent, ' ')  << TO_SECOND(bank->resetLatency) << ","; //RESET Latency (ns)
+		outputFile << string(indent, ' ')  << TO_SECOND(bank->resetLatency) << ","; //RESET write Latency (ns)
 		if (cell->memCellType==MRAM && cell->memCellLevel!=SLC){
 			outputFile << string(indent, ' ') << TO_SECOND(bank->resetLatencySoft) << ","; //RESET Soft Latency (ns)
 		}
 		else {
-			outputFile << string(indent, ' ') << "0,";
+			outputFile << string(indent, ' ') << "N/A" << ","; //in not MRAM with MLC
 		}
-		/* Uncomment to get rest Write Latency! and add columns up
+		/* Uncomment to get rest RESET Latency! and add columns up
         if (bank->stackedDieCount > 1 && bank->partitionGranularity == 0) {
             outputFile << string(indent, ' ') << " |--- TSV Latency    = " << TO_SECOND(bank->tsvArray.resetLatency * (bank->stackedDieCount-1)) << ",";
         } else if (bank->stackedDieCount > 1 && bank->partitionGranularity == 1) {
@@ -1656,11 +1668,11 @@ void Result::print_to_csv(ofstream &outputFile, int indent) {
 		if (cell->memCellType==MRAM && cell->memCellLevel!=SLC){
 			outputFile << string(indent, ' ') << TO_SECOND(bank->setLatencySoft) << ","; //SET Soft Latency (ns)
 		}
-		else {
-			outputFile << string(indent, ' ') << "0,";
+		else { 
+			outputFile << string(indent, ' ') << "N/A"<<","; //if not MRAM with MLC
 		}
 
-		/*uncomment to get these details: 
+		/*uncomment to get 3D of SET Latency details: 
 		if (bank->stackedDieCount > 1 && bank->partitionGranularity == 0) {
             outputFile << string(indent, ' ') << " |--- TSV Latency    = " << TO_SECOND(bank->tsvArray.setLatency * (bank->stackedDieCount-1)) << ",";
         } else if (bank->stackedDieCount > 1 && bank->partitionGranularity == 1) {
@@ -1680,7 +1692,7 @@ void Result::print_to_csv(ofstream &outputFile, int indent) {
 		outputFile << string(indent, ' ') << "       |--- Row Decoder Latency  = " << TO_SECOND(bank->mat.subarray.rowDecoder.writeLatency) << ",";
 		outputFile << string(indent, ' ') << "       |--- Charger Latency      = " << TO_SECOND(bank->mat.subarray.chargeLatency) << ",";
 
-
+	//Uncomment this if you are working with NAND
 	} else if (cell->memCellType == SLCNAND ||cell->memCellType ==MLCNAND) {
 		outputFile << string(indent, ' ') << " - Erase Latency = " << TO_SECOND(bank->resetLatency) << ",";
         if (bank->stackedDieCount > 1 && bank->partitionGranularity == 0) {
@@ -1717,6 +1729,7 @@ void Result::print_to_csv(ofstream &outputFile, int indent) {
 		outputFile << string(indent, ' ') << "       |--- Row Decoder Latency = " << TO_SECOND(bank->mat.subarray.rowDecoder.writeLatency) << ",";
 		outputFile << string(indent, ' ') << "       |--- Charge Latency      = " << TO_SECOND(bank->mat.subarray.chargeLatency) << ",";
 	}
+	// Uncomment this if you are working with DRAM
     if (cell->memCellType == eDRAM || cell->memCellType == DRAM) {
         outputFile << string(indent, ' ') << " - Refresh Latency = " << TO_SECOND(bank->refreshLatency) << ",";
         if (bank->stackedDieCount > 1 && bank->partitionGranularity == 0) {
@@ -1737,23 +1750,42 @@ void Result::print_to_csv(ofstream &outputFile, int indent) {
         outputFile << string(indent, ' ') << " - Shift Latency = " << TO_SECOND(bank->shiftLatency) << ",";
     }
 	*/
+	double numReadouts =  (double)bank->mat.subarray.numColumn / ((double)bank->blockSize / 
+	(bank->numActiveMatPerColumn * bank->numActiveMatPerRow *  bank->numActiveSubarrayPerRow * bank->numActiveSubarrayPerColumn)) ;
+	//cout << string(indent, ' ') << "- OUR number consecutive Readouts per subarray  = " << numReadouts << endl;
+	//
+	double avg_rowDecoder_latency = (double)bank->mat.subarray.rowDecoder.readLatency/numReadouts;
+	//cout << string(indent, ' ') << "- OUR avg row decoder Latency   = " << avg_rowDecoder_latency << endl;
+
+	// our correction:
+	//Wordwidth / (subarray_latency - rowDecoder_latency + avg_rowDecoder_latency + Precharger_latency) / 8 (B/s)
+	//avg version: 
 
 	double readBandwidth = (double)bank->blockSize /
 			(bank->mat.subarray.readLatency - bank->mat.subarray.rowDecoder.readLatency
-			+ bank->mat.subarray.precharger.readLatency) / 8;
+			+ avg_rowDecoder_latency + bank->mat.subarray.precharger.readLatency) / 8;
+
 	outputFile << string(indent, ' ') << TO_BPS(readBandwidth) << ","; //Read Bandwidth
         //outputFile<<" blocksize "<<bank->blockSize<<" rL "<<bank->mat.subarray.readLatency * 1e6<<" rL1 "<<bank->mat.subarray.rowDecoder.readLatency * 1e6<<" rL2 "<<bank->mat.subarray.precharger.readLatency * 1e6<<"\n";
+	
+	double readBandwidth_per_mat = (((double)bank->blockSize /(bank->numActiveMatPerColumn * bank->numActiveMatPerRow)) /
+			(bank->mat.subarray.readLatency - bank->mat.subarray.rowDecoder.readLatency
+			+ avg_rowDecoder_latency + bank->mat.subarray.precharger.readLatency) / 8);
+
+	outputFile << string(indent, ' ') << TO_BPS(readBandwidth_per_mat) << ","; //Read Bandwidth per mat
+	
+	
 	double writeBandwidth = (double)bank->blockSize /
 			(bank->mat.subarray.writeLatency) / 8;
 	outputFile << string(indent, ' ') << TO_BPS(writeBandwidth) << ","; //Write Bandwidth
 
 	outputFile << string(indent, ' ') << TO_JOULE(bank->readDynamicEnergy) << ","; //Read Dynamic Energy (uJ)
 	
-	/*
+
     if (bank->stackedDieCount > 1 && bank->partitionGranularity == 0) {
         //cerr<<" using bank partitionGranularity as 0\n";
         // address and control bit dynamics + read data output dynamic
-        outputFile << string(indent, ' ') << TO_JOULE(bank->tsvArray.writeDynamicEnergy * (bank->stackedDieCount-1) * bank->tsvArray.numReadBits + bank->tsvArray.readDynamicEnergy * bank->tsvArray.numDataBits * (bank->stackedDieCount-1)) << ",";
+        outputFile << string(indent, ' ') << TO_JOULE(bank->tsvArray.writeDynamicEnergy * (bank->stackedDieCount-1) * bank->tsvArray.numReadBits + bank->tsvArray.readDynamicEnergy * bank->tsvArray.numDataBits * (bank->stackedDieCount-1)) << ",";//TSV Read Dynamic Energy
         //outputFile<<"SEE bank->tsvArray.writeDynamicEnergy "<<TO_JOULE(bank->tsvArray.writeDynamicEnergy)<<"\n";
 	//outputFile<<"SEE bank->tsvArray.numReadBits "<<bank->tsvArray.numReadBits<<"\n";
 	//outputFile<<"SEE bank->tsvArray.readDynamicEnergy "<<TO_JOULE(bank->tsvArray.readDynamicEnergy)<<"\n";
@@ -1764,7 +1796,7 @@ void Result::print_to_csv(ofstream &outputFile, int indent) {
         // address bit dynamic + control bit dynamic + read data dynamic
         // TODO: revisit this
         //cerr<<" using bank partitionGranularity as 1\n";
-        outputFile << string(indent, ' ') << TO_JOULE(bank->mat.tsvArray.writeDynamicEnergy * (bank->stackedDieCount-1) * (bank->mat.tsvArray.numAccessBits) + bank->tsvArray.writeDynamicEnergy * (bank->stackedDieCount-1) * bank->stackedDieCount + bank->tsvArray.readDynamicEnergy * bank->blockSize * (bank->stackedDieCount-1)) << ",";
+        outputFile << string(indent, ' ') << TO_JOULE(bank->mat.tsvArray.writeDynamicEnergy * (bank->stackedDieCount-1) * (bank->mat.tsvArray.numAccessBits) + bank->tsvArray.writeDynamicEnergy * (bank->stackedDieCount-1) * bank->stackedDieCount + bank->tsvArray.readDynamicEnergy * bank->blockSize * (bank->stackedDieCount-1)) << ",";//TSV Read Dynamic Energy
     }
 	else
 		outputFile << string(indent, ' ') << "N/A" << ",";
@@ -1773,13 +1805,11 @@ void Result::print_to_csv(ofstream &outputFile, int indent) {
 	if (inputParameter->routingMode == h_tree){
 		outputFile << string(indent, ' ') << TO_JOULE(bank->routingReadDynamicEnergy) << ","; //H-Tree Read Dynamic Energy (pJ)
 		outputFile << string(indent, ' ') << "N/A" << ",";
-		outputFile << string(indent, ' ') << "N/A" << ",";
-		outputFile << string(indent, ' ') << "N/A" << ",";
-		outputFile << string(indent, ' ') << "N/A" << ",";
-		outputFile << string(indent, ' ') << "N/A" << ",";
 	}
-	else
+	else{
+		outputFile << string(indent, ' ') << "N/A" << ",";
 		outputFile << string(indent, ' ') << TO_JOULE(bank->routingReadDynamicEnergy) << ","; //Non-H-Tree Read Dynamic Energy (pJ)
+	}
 	outputFile << string(indent, ' ') << TO_JOULE(bank->mat.readDynamicEnergy) << ","; //Mat Read Dynamic Energy (pJ)
 	outputFile << string(indent, ' ') << TO_JOULE(bank->mat.readDynamicEnergy - bank->mat.subarray.readDynamicEnergy
 														* bank->numActiveSubarrayPerRow * bank->numActiveSubarrayPerColumn)
@@ -1797,28 +1827,29 @@ void Result::print_to_csv(ofstream &outputFile, int indent) {
 
 	if (inputParameter->internalSensing){
 		outputFile << string(indent, ' ') << TO_JOULE(bank->mat.subarray.senseAmp.readDynamicEnergy) << ","; //Senseamp Read Dynamic Energy (pJ)
-	outputFile << string(indent, ' ') << TO_JOULE(bank->mat.subarray.bitlineMux.readDynamicEnergy
+		outputFile << string(indent, ' ') << TO_JOULE(bank->mat.subarray.bitlineMux.readDynamicEnergy
 													+ bank->mat.subarray.senseAmpMuxLev1.readDynamicEnergy
 													+ bank->mat.subarray.senseAmpMuxLev2.readDynamicEnergy) << ","; //Mux Read Dynamic Energy (pJ)
-	outputFile << string(indent, ' ') << TO_JOULE(bank->mat.subarray.precharger.readDynamicEnergy) << ","; //Precharge Read Dynamic Energy (pJ)
+		outputFile << string(indent, ' ') << TO_JOULE(bank->mat.subarray.precharger.readDynamicEnergy) << ","; //Precharge Read Dynamic Energy (pJ)
 	}
 	else {
 		outputFile << string(indent, ' ') << "N/A" << ",";
 		outputFile << string(indent, ' ') << "N/A" << ",";
 		outputFile << string(indent, ' ') << "N/A" << ",";
 	}
-	
-	*/	
+		
 	if (cell->memCellType == PCRAM || cell->memCellType == FBRAM || cell->memCellType == DWM || cell->memCellType == MRAM ||
 			(cell->memCellType == memristor && (cell->accessType == CMOS_access || cell->accessType == BJT_access))) {
 		if(cell->memCellType==PCRAM && cell->memCellLevel!=SLC){
-			outputFile << string(indent, ' ') << TO_JOULE(bank->resetDynamicEnergy+bank->setDynamicEnergy) << ","; //Write Dynamic Energy (pJ)
+			outputFile << string(indent, ' ') << TO_JOULE(bank->resetDynamicEnergy+bank->setDynamicEnergy) << ","; //Set + Reset Dynamic Energy (pJ)
 			//if (inputParameter->writeScheme==set_before_reset)
 			//	outputFile << string(indent, ' ') << "  |--- Single Bit Write Energy = " <<TO_JOULE(cell->setEnergy+(cell->resetEnergy+cell->readPower*cell->readPulse)*cell->avgIterations)<<",";
 			//else
 			//	outputFile << string(indent, ' ') << "  |--- Single Bit Write Energy = " <<TO_JOULE(cell->resetEnergy+(cell->setEnergy+cell->readPower*cell->readPulse)*cell->avgIterations)<<",";
 
 		}
+		else 
+			outputFile << string(indent, ' ') << "N/A" << ",";	
 
 
 		outputFile << string(indent, ' ') << TO_JOULE(bank->writeDynamicEnergy ) << ","; //Write Dynamic Energy (pJ)
@@ -1830,34 +1861,43 @@ void Result::print_to_csv(ofstream &outputFile, int indent) {
 		else 
 			outputFile << string(indent, ' ') << "N/A" << ",";
 		
-		/*
+
         if (bank->stackedDieCount > 1 && bank->partitionGranularity == 0) {
-            outputFile << string(indent, ' ') << " |--- TSV Dynamic Energy    = " << TO_JOULE(bank->tsvArray.resetDynamicEnergy * (bank->stackedDieCount-1) * bank->tsvArray.numAccessBits) << ",";
+            outputFile << string(indent, ' ') << TO_JOULE(bank->tsvArray.resetDynamicEnergy * (bank->stackedDieCount-1) * bank->tsvArray.numAccessBits) << ","; //TSV Reset Dynamic Energy
            //outputFile<<"SEE1 bank->tsvArray.resetDynamicEnergy "<<bank->tsvArray.resetDynamicEnergy<<"\n";
 	   //outputFile<<"SEE1 bank->tsvArray.numAccessBits "<<bank->tsvArray.numAccessBits<<"\n";
        	}
        	else if (bank->stackedDieCount > 1 && bank->partitionGranularity == 1) {
-            outputFile << string(indent, ' ') << " |--- TSV Dynamic Energy    = " << TO_JOULE(bank->tsvArray.resetDynamicEnergy * (bank->stackedDieCount-1) * bank->tsvArray.numAccessBits) << ",";
+            outputFile << string(indent, ' ') << TO_JOULE(bank->tsvArray.resetDynamicEnergy * (bank->stackedDieCount-1) * bank->tsvArray.numAccessBits) << ","; //TSV Reset Dynamic Energy
         }
-		if (inputParameter->routingMode == h_tree)
-			outputFile << string(indent, ' ') << " |--- H-Tree Dynamic Energy = " << TO_JOULE(bank->routingResetDynamicEnergy) << ",";
 		else
-			outputFile << string(indent, ' ') << " |--- H-Tree Dynamic Energy = " << TO_JOULE(bank->routingResetDynamicEnergy) << ",";
-		outputFile << string(indent, ' ') << " |--- Mat Dynamic Energy    = " << TO_JOULE(bank->mat.resetDynamicEnergy) << " per mat" << ",";
-		outputFile << string(indent, ' ') << "    |--- Predecoder Dynamic Energy = " << TO_JOULE(bank->mat.writeDynamicEnergy - bank->mat.subarray.writeDynamicEnergy
+			outputFile << string(indent, ' ') << "N/A" << ",";
+
+
+		if (inputParameter->routingMode == h_tree){
+			outputFile << string(indent, ' ') << TO_JOULE(bank->routingResetDynamicEnergy) << ","; //H-Tree Rest Dynamic Energy
+			outputFile << string(indent, ' ') << "N/A" << ",";
+		}
+		else{
+			outputFile << string(indent, ' ') << "N/A" << ",";
+			outputFile << string(indent, ' ') << TO_JOULE(bank->routingResetDynamicEnergy) << ","; //BUS Reset Dynamic Energy
+		}
+
+		outputFile << string(indent, ' ') << TO_JOULE(bank->mat.resetDynamicEnergy) << ","; //Mat Dynamic Energy
+		outputFile << string(indent, ' ') << TO_JOULE(bank->mat.writeDynamicEnergy - bank->mat.subarray.writeDynamicEnergy 
 															* bank->numActiveSubarrayPerRow * bank->numActiveSubarrayPerColumn)
-															<< ",";
-		outputFile << string(indent, ' ') << "    |--- Subarray Dynamic Energy   = " << TO_JOULE(bank->mat.subarray.writeDynamicEnergy) << " per active subarray" << ",";
-		outputFile << string(indent, ' ') << "       |--- Row Decoder Dynamic Energy = " << TO_JOULE(bank->mat.subarray.rowDecoder.writeDynamicEnergy) << ",";
-		outputFile << string(indent, ' ') << "       |--- Mux Decoder Dynamic Energy = " << TO_JOULE(bank->mat.subarray.bitlineMuxDecoder.writeDynamicEnergy
+															<< ","; //Predecoder Dynamic Energy
+		outputFile << string(indent, ' ') << TO_JOULE(bank->mat.subarray.writeDynamicEnergy) << ","; //Subarray Dynamic Energy 
+		outputFile << string(indent, ' ') << TO_JOULE(bank->mat.subarray.rowDecoder.writeDynamicEnergy) << ",";//Row Decoder Dynamic Energy
+		outputFile << string(indent, ' ') << TO_JOULE(bank->mat.subarray.bitlineMuxDecoder.writeDynamicEnergy
 														+ bank->mat.subarray.senseAmpMuxLev1Decoder.writeDynamicEnergy
-														+ bank->mat.subarray.senseAmpMuxLev2Decoder.writeDynamicEnergy) << ",";
-		outputFile << string(indent, ' ') << "       |--- Mux Dynamic Energy         = " << TO_JOULE(bank->mat.subarray.bitlineMux.writeDynamicEnergy
+														+ bank->mat.subarray.senseAmpMuxLev2Decoder.writeDynamicEnergy) << ",";//Mux Decoder Dynamic Energy
+		outputFile << string(indent, ' ')  << TO_JOULE(bank->mat.subarray.bitlineMux.writeDynamicEnergy
 														+ bank->mat.subarray.senseAmpMuxLev1.writeDynamicEnergy
-														+ bank->mat.subarray.senseAmpMuxLev2.writeDynamicEnergy) << ",";
-		outputFile << string(indent, ' ') << "       |--- Cell RESET Dynamic Energy  = " << TO_JOULE(bank->mat.subarray.cellResetEnergy)<<"  "<< TO_JOULE(bank->mat.subarray.cellResetEnergySoft)<< ",";
-		outputFile << string(indent, ' ') << "       |--- Single Cell RESET Energy  = " << TO_JOULE(cell->resetEnergy)<<"  "<< TO_JOULE(cell->resetEnergySoft)  << ",";
-		*/
+														+ bank->mat.subarray.senseAmpMuxLev2.writeDynamicEnergy) << ",";//Mux Dynamic Energy 
+		outputFile << string(indent, ' ') << TO_JOULE(bank->mat.subarray.cellResetEnergy)<<":"<< TO_JOULE(bank->mat.subarray.cellResetEnergySoft)<< ",";
+		outputFile << string(indent, ' ') << TO_JOULE(cell->resetEnergy)<<":"<< TO_JOULE(cell->resetEnergySoft)  << ","; //Single Cell RESET Energy 
+	
 
 		outputFile << string(indent, ' ') << TO_JOULE(bank->setDynamicEnergy) << ","; //Set Dynamic energy
 		if (cell->memCellType==MRAM && cell->memCellLevel!=SLC){
@@ -1866,26 +1906,31 @@ void Result::print_to_csv(ofstream &outputFile, int indent) {
 		else 
 			outputFile << string(indent, ' ') << "N/A" << ",";
 
-		/*
-		if (inputParameter->routingMode == h_tree)
-			outputFile << string(indent, ' ') << " |--- H-Tree Dynamic Energy = " << TO_JOULE(bank->routingSetDynamicEnergy) << ",";
-		else
-			outputFile << string(indent, ' ') << " |--- Non-H-Tree Dynamic Energy = " << TO_JOULE(bank->routingSetDynamicEnergy) << ",";
-		outputFile << string(indent, ' ') << " |--- Mat Dynamic Energy    = " << TO_JOULE(bank->mat.setDynamicEnergy) << " per mat" << ",";
-		outputFile << string(indent, ' ') << "    |--- Predecoder Dynamic Energy = " << TO_JOULE(bank->mat.writeDynamicEnergy - bank->mat.subarray.writeDynamicEnergy
+
+		if (inputParameter->routingMode == h_tree){
+			outputFile << string(indent, ' ') << TO_JOULE(bank->routingSetDynamicEnergy) << ","; //H-Tree Set Dynamic Energy
+			outputFile << string(indent, ' ') << "N/A" << ",";
+		}
+		else{
+			outputFile << string(indent, ' ') << "N/A" << ",";
+			outputFile << string(indent, ' ') << TO_JOULE(bank->routingSetDynamicEnergy) << ","; //Bus Set Dynamic Energy
+			}
+
+		outputFile << string(indent, ' ') << TO_JOULE(bank->mat.setDynamicEnergy) << ","; //Mat Set Dynamic Energy 
+		outputFile << string(indent, ' ') << TO_JOULE(bank->mat.writeDynamicEnergy - bank->mat.subarray.writeDynamicEnergy
 															* bank->numActiveSubarrayPerRow * bank->numActiveSubarrayPerColumn)
-															<< ",";
-		outputFile << string(indent, ' ') << "    |--- Subarray Dynamic Energy   = " << TO_JOULE(bank->mat.subarray.writeDynamicEnergy) << " per active subarray" << ",";
-		outputFile << string(indent, ' ') << "       |--- Row Decoder Dynamic Energy = " << TO_JOULE(bank->mat.subarray.rowDecoder.writeDynamicEnergy) << ",";
-		outputFile << string(indent, ' ') << "       |--- Mux Decoder Dynamic Energy = " << TO_JOULE(bank->mat.subarray.bitlineMuxDecoder.writeDynamicEnergy
+															<< ","; //Predecoder Set Dynamic Energy
+		outputFile << string(indent, ' ') << TO_JOULE(bank->mat.subarray.writeDynamicEnergy) << ",";//Subarray Set Dynamic Energy
+		outputFile << string(indent, ' ') << TO_JOULE(bank->mat.subarray.rowDecoder.writeDynamicEnergy) << ","; // Row Decoder Set Dynamic Energy
+		outputFile << string(indent, ' ') << TO_JOULE(bank->mat.subarray.bitlineMuxDecoder.writeDynamicEnergy
 														+ bank->mat.subarray.senseAmpMuxLev1Decoder.writeDynamicEnergy
-														+ bank->mat.subarray.senseAmpMuxLev2Decoder.writeDynamicEnergy) << ",";
-		outputFile << string(indent, ' ') << "       |--- Mux Dynamic Energy         = " << TO_JOULE(bank->mat.subarray.bitlineMux.writeDynamicEnergy
+														+ bank->mat.subarray.senseAmpMuxLev2Decoder.writeDynamicEnergy) << ","; //Mux Decoder Set Dynamic Energy
+		outputFile << string(indent, ' ') << TO_JOULE(bank->mat.subarray.bitlineMux.writeDynamicEnergy
 														+ bank->mat.subarray.senseAmpMuxLev1.writeDynamicEnergy
-														+ bank->mat.subarray.senseAmpMuxLev2.writeDynamicEnergy) << ",";
-		outputFile << string(indent, ' ') << "       |--- Cell SET Dynamic Energy    = " << TO_JOULE(bank->mat.subarray.cellSetEnergy) <<"  "<< TO_JOULE(bank->mat.subarray.cellSetEnergySoft)<<"  "<<TO_JOULE(bank->mat.subarray.writeDynamicEnergy)<<",";
-		outputFile << string(indent, ' ') << "       |--- Single Cell SET Energy  = " << TO_JOULE(cell->setEnergy)<<"  "<< TO_JOULE(cell->setEnergySoft) << ",";
-		*/
+														+ bank->mat.subarray.senseAmpMuxLev2.writeDynamicEnergy) << ","; //Mux Set Dynamic Energy
+		outputFile << string(indent, ' ') << TO_JOULE(bank->mat.subarray.cellSetEnergy) <<":"<< TO_JOULE(bank->mat.subarray.cellSetEnergySoft)<<":"<<TO_JOULE(bank->mat.subarray.writeDynamicEnergy)<<",";
+		outputFile << string(indent, ' ') << TO_JOULE(cell->setEnergy)<<":"<< TO_JOULE(cell->setEnergySoft) << ","; // Single Cell SET Energy
+		
 	/* uncomment to get NAND 
 	} else if (cell->memCellType == SLCNAND||cell->memCellType==MLCNAND) {
 		outputFile << string(indent, ' ') << " - Erase Dynamic Energy = " << TO_JOULE(bank->resetDynamicEnergy) << " per block" << ",";
@@ -1931,16 +1976,17 @@ void Result::print_to_csv(ofstream &outputFile, int indent) {
 														+ bank->mat.subarray.senseAmpMuxLev1.writeDynamicEnergy
 														+ bank->mat.subarray.senseAmpMuxLev2.writeDynamicEnergy) << ",";
 	*/
-	}  
-	else {
-		outputFile << string(indent, ' ') << " - Write Dynamic Energy = " << TO_JOULE(bank->writeDynamicEnergy) << ",";
-        if (bank->stackedDieCount > 1 && bank->partitionGranularity == 0) {
-            outputFile << string(indent, ' ') << " |--- TSV Dynamic Energy    = " << TO_JOULE(bank->tsvArray.writeDynamicEnergy * (bank->stackedDieCount-1) * bank->tsvArray.numAccessBits) << ",";
+	//}  
+	//IF NOT PCRAM but DRAM ;)
+	//else {
+	//	outputFile << string(indent, ' ') << " - Write Dynamic Energy = " << TO_JOULE(bank->writeDynamicEnergy) << ",";
+    //    if (bank->stackedDieCount > 1 && bank->partitionGranularity == 0) {
+    //        outputFile << string(indent, ' ') << " |--- TSV Dynamic Energy    = " << TO_JOULE(bank->tsvArray.writeDynamicEnergy * (bank->stackedDieCount-1) * bank->tsvArray.numAccessBits) << ",";
             //outputFile<<"SEE4 bank->tsvArray.resetDynamicEnergy "<<bank->tsvArray.resetDynamicEnergy<<"\n";
 	    //outputFile<<"SEE4 bank->tsvArray.numAccessBits "<<bank->tsvArray.numAccessBits<<"\n";
 
-	}
-	} /*else if (bank->stackedDieCount > 1 && bank->partitionGranularity == 1) {
+	//}
+	/*else if (bank->stackedDieCount > 1 && bank->partitionGranularity == 1) {
             outputFile << string(indent, ' ') << " |--- TSV Dynamic Energy    = " << TO_JOULE(bank->tsvArray.writeDynamicEnergy * (bank->stackedDieCount-1) * bank->tsvArray.numAccessBits) << ",";
         }
 		if (inputParameter->routingMode == h_tree)
@@ -1961,9 +2007,9 @@ void Result::print_to_csv(ofstream &outputFile, int indent) {
 														+ bank->mat.subarray.senseAmpMuxLev2.writeDynamicEnergy) << ",";
 		if (cell->memCellType == MRAM) {
 			outputFile << string(indent, ' ') << "       |--- Bitline & Cell Write Energy= " << TO_JOULE(bank->mat.subarray.cellResetEnergy) << ",";
-		} /*
+		}
 	}
-	/* uncomment to get this and add columns!
+	//uncomment to get this and add columns DRAM!
     if (cell->memCellType == eDRAM|| cell->memCellType == DRAM) {
         outputFile << string(indent, ' ') << " - Refresh Dynamic Energy = " << TO_JOULE(bank->refreshDynamicEnergy) << ",";
         if (bank->stackedDieCount > 1 && bank->partitionGranularity == 0) {
@@ -1998,21 +2044,28 @@ void Result::print_to_csv(ofstream &outputFile, int indent) {
 
 	if (inputParameter->routingMode == h_tree)
       {		outputFile << string(indent, ' ') << TO_WATT(bank->routingLeakage) << ","; //H-Tree Leakage Power (W)
+	  		outputFile << string(indent, ' ') << "N/A" << ",";
           //outputFile<<"numRowMat "<<bank->numRowMat<<" numColumnMat "<<bank->numColumnMat<<"\n";
       }
-	else
-		outputFile << string(indent, ' ') << " |--- Non-H-Tree Leakage Power = " << TO_WATT(bank->routingLeakage) << ",";
+	else{
+		outputFile << string(indent, ' ') << TO_WATT(bank->routingLeakage) << ","; //Bus Leakage Power
+		outputFile << string(indent, ' ') << "N/A" << ",";
+	}
 	outputFile << string(indent, ' ') << TO_WATT(bank->mat.leakage) << ","; //Mat Leakage Power (W)
 
     //if (cell->memCellType == eDRAM|| cell->memCellType == DRAM) {
     //    outputFile << string(indent, ' ') << " - Refresh Power = " << TO_WATT(bank->refreshDynamicEnergy / (cell->retentionTime)) << ",";
-   // }
+   	// }
     //if (cell->memCellType ==DWM) {
     //    outputFile << string(indent, ' ') << " - Shift Dynamic Energy = " << TO_JOULE(bank->shiftDynamicEnergy) << ",";
-   // }
+   	// }
+
+	double dynamic_read_power = readBandwidth * (bank->readDynamicEnergy / ((double)bank->blockSize / 8) ); //Read Dynamic Power calculations
+	outputFile << string(indent, ' ') << TO_WATT(dynamic_read_power) << ","; //Read Dynamic Power
+
 	}
 
-
+}
 }
 
 
