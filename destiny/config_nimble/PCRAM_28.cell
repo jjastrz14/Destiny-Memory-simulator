@@ -14,7 +14,7 @@
 
 -ReadMode: current //volatege
 -ReadCurrent (uA): 30
--ReadEnergy (pJ): 2
+-ReadEnergy (pJ): 2 //probably not needed
 
 -ResetMode: current
 -ResetCurrent (uA): 300
@@ -27,4 +27,4 @@
 -AccessType: CMOS
 //BJT
 -VoltageDropAccessDevice (V): 0.3
--AccessCMOSWidth (F): 2
+-AccessCMOSWidth (F): 6 

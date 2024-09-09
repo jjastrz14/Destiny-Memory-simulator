@@ -182,7 +182,7 @@ int main(int argc, char *argv[])
 		//		<< "_" << inputParameter->associativity;
 
 		temp << inputParameter->outputFilePrefix << "_" << inputParameter->capacity / 1024 / 1024 << "MB_" 
-			 << inputParameter->wordWidth << "_word"; 
+			 << inputParameter->wordWidth << "_word_" << inputParameter->optimizationTarget; 
 
 		//if (inputParameter->internalSensing)
 		//	temp << "_IN";

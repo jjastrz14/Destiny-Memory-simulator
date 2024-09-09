@@ -847,7 +847,7 @@ void SubArray::CalculatePower() {
 				if (cell->readPower == 0)
 					cellReadEnergy = 2 * cell->CalculateReadPower() * senseAmp.readLatency  + cell->CalculateReadPower() * cell->readPulse; /* x2 is because of the reference cell */
 				else
-					cellReadEnergy =  cell->readPower * (senseAmp.readLatency+ cell->readPulse) +cell->readPower * senseAmp.readLatency;
+					cellReadEnergy =  cell->readPower * (senseAmp.readLatency + cell->readPulse) + cell->readPower * senseAmp.readLatency;
 				singleCellReadEnergy = cellReadEnergy;
 				cellReadEnergy *= numColumn / muxSenseAmp / muxOutputLev1 / muxOutputLev2;
 			}else if(inputParameter->readScheme == read_and_compare && cell->memCellLevel!=SLC){
