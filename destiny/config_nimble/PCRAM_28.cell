@@ -25,6 +25,6 @@
 -SetPulse (ns): 150
 
 -AccessType: CMOS
-//BJT
+//another option BJT
 -VoltageDropAccessDevice (V): 0.3
--AccessCMOSWidth (F): 6 
+-AccessCMOSWidth (F): 4
