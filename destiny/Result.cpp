@@ -1382,9 +1382,9 @@ void Result::print_to_csv(ofstream &outputFile, int indent) {
 	outputFile<< "Optimization Target"
 			<< ",Bank Organization,Bank Row Activation,Bank Column Activation,Mat Organization,Mat Row Activation,Mat Column Activation,Subarray Size,Senseamp Mux,Output Level-1 Mux,Output Level-2 Mux"
 			<< ",Local Wire Type,Local Wire Repeater Type,Local Wire Low Swing,Global Wire Type,Global Wire Repeater Type,Global Wire Low Swing,Buffer Design Style"
-			<< ",Height Total ,Width Total ,Total Area ,Height Mat,Width Mat, Mat Area, Mat Efficiency,Height Subarray, Width Subarry,Subarray Area,Subarray Efficiency"
+			<< ",Height Total,Width Total,Total Area,Height Mat,Width Mat,Mat Area,Mat Efficiency,Height Subarray,Width Subarry,Subarray Area,Subarray Efficiency"
 			<< ",TSV Area,Logic Layer Area,Area Efficiency"
-			<< ",Read Latency,TSV Read Latency, H-Tree Read Latency,Bus Read Latency,Mat Read Latency,Predecoder Read Latency,Subarray Read Latency,Row Read Decoder Latency,Bitline Read Latency (ns:ns:ns),Senseamp read Latency,Muxread Latency,Precharge read Latency,Read Pulse,Comparator read Latency"
+			<< ",Read Latency,TSV Read Latency,H-Tree Read Latency,Bus Read Latency,Mat Read Latency,Predecoder Read Latency,Subarray Read Latency,Row Read Decoder Latency,Bitline Read Latency (ns:ns:ns),Senseamp read Latency,Muxread Latency,Precharge read Latency,Read Pulse,Comparator read Latency"
 			<< ",Write Total Latency,RESET Latency,RESET Soft Latency,SET Latency,SET Soft Latency"
 			<< ",Read Bandwidth,Read Bandwidth per mat,Write Bandwidth"
 			<< ",Read Dynamic Energy,TSV Read Dynamic Energy,H-tree Read Dynamic Energy,Non-H-Tree Read Dynamic Energy,Mat Read Dynamic Energy,Predecoder Read Dynamic Energy,Subarray Read Dynamic Energy,Row Decoder Read Dynamic Energy,Mux Decoder Read Dynamic Energy,Cell Read Dynamic Energy,Senseamp Read Dynamic Energy,Mux Read Dynamic Energy,Precharge Read Dynamic Energy"
@@ -1567,6 +1567,7 @@ void Result::print_to_csv(ofstream &outputFile, int indent) {
 
     if (bank->stackedDieCount > 1 && bank->partitionGranularity == 0) {
         outputFile << string(indent, ' ') << TO_SQM(bank->tsvArray.area) << ","; //TSV Area 
+		outputFile << string(indent, ' ') << "N/A" << ","; //Logic Layer Area
     } else if (bank->stackedDieCount > 1 && bank->partitionGranularity == 1) {
         double totalTSVArea = bank->tsvArray.area + bank->mat.tsvArray.area
                               * bank->numColumnMat * bank->numRowMat;
