@@ -1407,7 +1407,7 @@ void Result::print_to_csv(ofstream &outputFile, int indent) {
 			<< ",Subarray Read Dynamic Energy,Row Decoder Read Dynamic Energy,Mux Decoder Read Dynamic Energy,Mux Dynamic Energy,Cell RESET Read Dynamic Energy,Single Cell RESET Read Energy"
 			<< ",Set Dynamic Energy, Set Soft Dynamic Energy,H-Tree Set Dynamic Energy,Bus Set Dynamic Energy,Mat Set Dynamic Energy,Predecoder Dynamic Energy"
 			<< ",Subarray Set Dynamic Energy, Row Decoder Set Dynamic Energy, Mux Decoder Set Dynamic Energy, Mux Set Dynamic Energy, Cell SET Dynamic Energy,Single Cell SET Energy "
-			<< ",Leakage Power,TSV Leakage Power,H-Tree Leakage Power,Bus Leakage Power,Mat Leakage Power per mat,Read Dynamic Power,TSV Dynamic Power"
+			<< ",Leakage Power,TSV Leakage Power,H-Tree Leakage Power,Bus Leakage Power,Mat Leakage Power per mat,Read Dynamic Power,Read Dynamic Power per mat,TSV Dynamic Power"
 			<< endl;
 
 	outputFile << string(indent, ' ') << printOptimizationTarget()<<","; //Optimization Target
@@ -2078,6 +2078,10 @@ void Result::print_to_csv(ofstream &outputFile, int indent) {
 	double dynamic_read_power = readBandwidth * (bank->readDynamicEnergy / ((double)bank->blockSize / 8) ); //Read Dynamic Power calculations
 	outputFile << string(indent, ' ') << TO_WATT(dynamic_read_power) << ","; //Read Dynamic Power
 
+	double dynamic_read_power_per_mat = readBandwidth_per_mat * (bank->mat.readDynamicEnergy / ((double)bank->blockSize / (bank->numActiveMatPerRow * bank->numActiveMatPerColumn) / 8) ); //Read Dynamic Power calculations
+	outputFile << string(indent, ' ') << TO_WATT(dynamic_read_power_per_mat) << ","; //Read Dynamic Power
+
+	//to get the dynamic_read_power remember about htree read dynamic energy 
 
     if (bank->stackedDieCount > 1 && bank->partitionGranularity == 0) {
         // address and control bit dynamics + read data output dynamic

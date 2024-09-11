@@ -26,3 +26,7 @@ destiny/config_nimble/bank_PCRAM_28_8x8_16MB_16_word.csv
 destiny/config_nimble/bank_PCRAM_28_test_16MB_64_word.csv
 destiny/config_nimble/summary_PCRAM.csv
 config_nimble
+config_run_09_11
+test
+run_09_11
+run_11_9

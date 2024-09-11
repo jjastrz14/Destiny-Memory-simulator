@@ -1,6 +1,6 @@
 -DesignTarget : cache, RAM, else: CAM
 
--OptimizationTarget: ReadLatency, WriteLatency, ReadDynamicEnergy, WriteDynamicEnergy, ReadEDP, WriteEDP, LeakagePower, Area, Full (a whole exploration space generated to csv)
+-OptimizationTarget: Area, ReadLatency, WriteLatency, ReadDynamicEnergy, WriteDynamicEnergy, ReadEDP, WriteEDP, LeakagePower, Full (a whole exploration space generated to csv)
 
 -SecondOptimizationTarget: same as above expect "Full"
 
