@@ -898,6 +898,20 @@ void Result::print(int indent) {
 	// Dynamic read power (J/B) readBandwidth * (readDynamicEnergy / per byte)
 	double dynamic_read_power = readBandwidth * (bank->readDynamicEnergy / ((double)bank->blockSize / 8) );
 	cout << string(indent, ' ') << " OUR - Read Dynamic Power = " << TO_WATT(dynamic_read_power) << endl;
+
+	if (bank->stackedDieCount > 1 && bank->partitionGranularity == 0) {
+        // address and control bit dynamics + read data output dynamic
+		double tsv_dynamic_power = readBandwidth * ((bank->tsvArray.writeDynamicEnergy * (bank->stackedDieCount-1) * bank->tsvArray.numReadBits + bank->tsvArray.readDynamicEnergy * bank->tsvArray.numDataBits * (bank->stackedDieCount-1))/ 8);
+        cout << string(indent, ' ') << " OUR - TSV Dynamic Power = " << TO_WATT(tsv_dynamic_power) << endl; //TSV Dynamic Power
+
+	
+    } 
+    else if (bank->stackedDieCount > 1 && bank->partitionGranularity == 1) {
+        // address bit dynamic + control bit dynamic + read data dynamic
+        // TODO: revisit this
+		double tsv_dynamic_power = readBandwidth * ((bank->mat.tsvArray.writeDynamicEnergy * (bank->stackedDieCount-1) * (bank->mat.tsvArray.numAccessBits) + bank->tsvArray.writeDynamicEnergy * (bank->stackedDieCount-1) * bank->stackedDieCount + bank->tsvArray.readDynamicEnergy * bank->blockSize * (bank->stackedDieCount-1))/8);
+        cout << string(indent, ' ') << " OUR - TSV Dynamic Power = " << TO_WATT(tsv_dynamic_power) << endl;//TSV Read Dynamic Energy
+    }
 }
 
 void Result::printAsCache(Result &tagResult, CacheAccessMode cacheAccessMode) {
@@ -1393,7 +1407,7 @@ void Result::print_to_csv(ofstream &outputFile, int indent) {
 			<< ",Subarray Read Dynamic Energy,Row Decoder Read Dynamic Energy,Mux Decoder Read Dynamic Energy,Mux Dynamic Energy,Cell RESET Read Dynamic Energy,Single Cell RESET Read Energy"
 			<< ",Set Dynamic Energy, Set Soft Dynamic Energy,H-Tree Set Dynamic Energy,Bus Set Dynamic Energy,Mat Set Dynamic Energy,Predecoder Dynamic Energy"
 			<< ",Subarray Set Dynamic Energy, Row Decoder Set Dynamic Energy, Mux Decoder Set Dynamic Energy, Mux Set Dynamic Energy, Cell SET Dynamic Energy,Single Cell SET Energy "
-			<< ",Leakage Power,TSV Leakage Power,H-Tree Leakage Power,Bus Leakage Power,Mat Leakage Power per mat,Read Dynamic Power"
+			<< ",Leakage Power,TSV Leakage Power,H-Tree Leakage Power,Bus Leakage Power,Mat Leakage Power per mat,Read Dynamic Power,TSV Dynamic Power"
 			<< endl;
 
 	outputFile << string(indent, ' ') << printOptimizationTarget()<<","; //Optimization Target
@@ -2063,6 +2077,23 @@ void Result::print_to_csv(ofstream &outputFile, int indent) {
 
 	double dynamic_read_power = readBandwidth * (bank->readDynamicEnergy / ((double)bank->blockSize / 8) ); //Read Dynamic Power calculations
 	outputFile << string(indent, ' ') << TO_WATT(dynamic_read_power) << ","; //Read Dynamic Power
+
+
+    if (bank->stackedDieCount > 1 && bank->partitionGranularity == 0) {
+        // address and control bit dynamics + read data output dynamic
+		double tsv_dynamic_power = readBandwidth * ((bank->tsvArray.writeDynamicEnergy * (bank->stackedDieCount-1) * bank->tsvArray.numReadBits + bank->tsvArray.readDynamicEnergy * bank->tsvArray.numDataBits * (bank->stackedDieCount-1))/ 8);
+        outputFile << string(indent, ' ') << TO_WATT(tsv_dynamic_power) << ","; //TSV Dynamic Power
+
+	
+    } 
+    else if (bank->stackedDieCount > 1 && bank->partitionGranularity == 1) {
+        // address bit dynamic + control bit dynamic + read data dynamic
+        // TODO: revisit this
+		double tsv_dynamic_power = readBandwidth * ((bank->mat.tsvArray.writeDynamicEnergy * (bank->stackedDieCount-1) * (bank->mat.tsvArray.numAccessBits) + bank->tsvArray.writeDynamicEnergy * (bank->stackedDieCount-1) * bank->stackedDieCount + bank->tsvArray.readDynamicEnergy * bank->blockSize * (bank->stackedDieCount-1))/8);
+        outputFile << string(indent, ' ') << TO_WATT(tsv_dynamic_power) << ",";//TSV Read Dynamic Energy
+    }
+	else
+		outputFile << string(indent, ' ') << "N/A" << ",";
 
 	}
 
