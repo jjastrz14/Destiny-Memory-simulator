@@ -7,14 +7,15 @@ BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DESTINY_EXECUTABLE="$BASE_DIR/destiny"
 
 # Base configuration file
-BASE_CONFIG="$BASE_DIR/run_11_9/bank_PCRAM_28.cfg"
+BASE_CONFIG="$BASE_DIR/config_DATE/bank_PCRAM_28.cfg"
 
 # Parameters to vary
 OPTIMIZATION_TARGETS=("Area" "ReadDynamicEnergy" "ReadEDP" "ReadLatency" "LeakagePower")
 STACKED_DIE_COUNTS=(1)
 #note that is setted as nxn = m MB of capacity!
-FORCE_BANK_AS=("1x1") #"2x2" "4x4" "8x8" "16x16"
-WORD_WIDTHS=(8 16 32 64 128 256 512 1024 2048)
+FORCE_BANK_AS=("1x1" "1x2" "1x4" "2x2" "2x4" "4x4")
+WORD_WIDTHS=(8 16 32 64 128 256)
+ROUTING=("H-tree ", "Non H-tree")
 
 # Function to modify configuration file
 modify_config() {
@@ -33,7 +34,7 @@ calculate_capacity() {
 }
 
 # Create a directory for temporary config files
-TEMP_CONFIG_DIR="$BASE_DIR/run_11_9"
+TEMP_CONFIG_DIR="$BASE_DIR/config_DATE"
 mkdir -p "$TEMP_CONFIG_DIR"
 
 # Main loop
@@ -41,6 +42,7 @@ for opt_target in "${OPTIMIZATION_TARGETS[@]}"; do
     for stacked_die in "${STACKED_DIE_COUNTS[@]}"; do
         for force_bank in "${FORCE_BANK_AS[@]}"; do
             for word_width in "${WORD_WIDTHS[@]}"; do
+                for routing in "${ROUTING[@]}"; do
                 # Calculate capacity based on Force_Bank_As
                 capacity=$(calculate_capacity "$force_bank")
 
@@ -55,9 +57,16 @@ for opt_target in "${OPTIMIZATION_TARGETS[@]}"; do
                 modify_config "$config_file" "OptimizationTarget" "$opt_target"
                 modify_config "$config_file" "OutputFilePrefix" "$output_prefix"
                 modify_config "$config_file" "StackedDieCount" "$stacked_die"
-                modify_config "$config_file" "ForceBankA (Total AxB)" "$force_bank"
+                modify_config "$config_file" "ForceBank (Total AxB, Active CxD)" "$force_bank", "$force_bank"
                 modify_config "$config_file" "WordWidth (bit)" "$word_width"
                 modify_config "$config_file" "Capacity (MB)" "$capacity"
+                modify_config "$config_file" "Routing" "$routing"
+                modify_config "$config_fie"  "InternalSensing" "true"
+                if [ "$routing" = "H-tree" ]; then
+                    modify_config "$config_file" "InternalSensing" "true"
+                else
+                    modify_config "$config_file" "InternalSensing" "false"
+                fi
 
                 # Run the program with the modified configuration
                 echo "Running with: $opt_target, $output_prefix, $stacked_die, $force_bank, $word_width, $capacity MB"

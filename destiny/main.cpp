@@ -12,6 +12,8 @@
 #include <iomanip>
 #include <math.h>
 #include <cassert>
+#include <sys/stat.h>
+#include <errno.h>
 #include "InputParameter.h"
 #include "MemCell.h"
 #include "RowDecoder.h"
@@ -44,7 +46,25 @@ MemCell **sweepCells;
 void applyConstraint();
 int nvsim(ofstream& outputFile, string inputFileName, long long& numSolution, Result *bestDataResults, Result *bestTagResults);
 
-
+// Function to create directory if it doesn't exist
+void createDirectoryIfNotExists(const std::string& path) {
+    struct stat info;
+    if (stat(path.c_str(), &info) != 0) {
+        if (errno == ENOENT) {  // Directory doesn't exist
+            if (mkdir(path.c_str(), 0777) != 0) {
+                std::cerr << "Error creating directory " << path << ": " << std::strerror(errno) << std::endl;
+            } else {
+                std::cout << "Created directory: " << path << std::endl;
+            }
+        } else {
+            std::cerr << "Error checking directory " << path << ": " << std::strerror(errno) << std::endl;
+        }
+    } else if (info.st_mode & S_IFDIR) {
+        std::cout << "Directory already exists: " << path << std::endl;
+    } else {
+        std::cerr << path << " exists but is not a directory" << std::endl;
+    }
+}
 
 void tsvVerif(InputParameter *inputParameter)
 {
@@ -182,7 +202,7 @@ int main(int argc, char *argv[])
 		//		<< "_" << inputParameter->associativity;
 
 		temp << inputParameter->outputFilePrefix << "_" << inputParameter->capacity / 1024 / 1024 << "MB_" 
-			 << inputParameter->wordWidth << "_word_" << inputParameter->optimizationTarget; 
+			 << inputParameter->wordWidth << "_word_" << inputParameter->optimizationTarget << "_routing_" << inputParameter->routingMode; 
 
 		//if (inputParameter->internalSensing)
 		//	temp << "_IN";
@@ -193,14 +213,37 @@ int main(int argc, char *argv[])
 		//else
 		//	temp << "_CUR";
 		//temp << ".csv";
+		
+		//std::string configDate = "config_DATE"; // This should match the prefix in inputFileName
+		std::string resultsFolder = "results";
+
+		// Create directory
+		//createDirectoryIfNotExists(configDate);
+
+		// Create config_DATE/results directory
+		createDirectoryIfNotExists(resultsFolder);
+
 		outputFileName_prefix = temp.str();
-        int extIdx = inputFileName.find_last_of("."); 
-        outputFileName = inputFileName.substr(0, extIdx) + "_" +outputFileName_prefix+ ".csv";
-		outputFile.open(outputFileName.c_str(), ofstream::out | ofstream::trunc);
-        if (!outputFile.is_open()) {
-            cout << "Could not open file " << outputFileName << "!" << endl;
-            exit(-1);
-        }
+
+		// Extract just the filename from inputFileName
+		size_t lastSlash = inputFileName.find_last_of("/");
+		std::string baseFileName;
+		if (lastSlash != std::string::npos) {
+			baseFileName = inputFileName.substr(lastSlash + 1);
+		} else {
+			baseFileName = inputFileName;
+		}
+
+		int extIdx = baseFileName.find_last_of(".");
+		outputFileName = resultsFolder + "/" + baseFileName.substr(0, extIdx) + "_" + outputFileName_prefix + ".csv";
+
+		outputFile.open(outputFileName.c_str(), std::ios::out | std::ios::trunc);
+		if (!outputFile.is_open()) {
+			std::cerr << "Could not open file " << outputFileName << ": " << std::strerror(errno) << std::endl;
+			exit(-1);
+		} else {
+			std::cout << "Successfully opened file: " << outputFileName << std::endl;
+		}
 	//}
 
     int numCellTypes = inputParameter->fileMemCell.size();

@@ -62,7 +62,7 @@ def convert_to_mbs(value):
     return float(value)
 
 # Get all CSV files matching the pattern
-file_pattern = 'bank_PCRAM_28_*x*_*MB_*_word_*.csv'
+file_pattern = 'config_DATE/PCRAM_28_*x*_*MB_*_word_*_routing_*.csv'
 file_list = glob.glob(file_pattern)
 
 # Initialize an empty list to store dataframes
@@ -95,7 +95,7 @@ for file in file_list:
 # Concatenate all dataframes
 result = pd.concat(dfs, ignore_index=True)
 
-file_extended_path = 'summary_PCRAM_extended.csv'
+file_extended_path = 'summary_PCRAM_non_htree_extended.csv'
 
 # Save the result to a new CSV file
 result.to_csv(file_extended_path, index=False, na_rep='N\A')
@@ -109,13 +109,13 @@ short_summary_columns = [
     'Write Bandwidth', 'Read Dynamic Energy', 'TSV Read Dynamic Energy',
     'Mat Read Dynamic Energy', 'Write Dynamic Energy', 'Leakage Power',
     'TSV Leakage Power', 'Mat Leakage Power per mat', 'Read Dynamic Power',
-    'TSV Dynamic Power'
+    'Read Dynamic Power per mat','TSV Dynamic Power'
 ]
 
 # Create short summary dataframe
 short_summary = result[short_summary_columns].copy()
 
-file_short_path = 'summary_PCRAM_short.csv'
+file_short_path = 'summary_PCRAM_non_htree_short.csv'
 
 # Save the short summary to a new CSV file
 short_summary.to_csv(file_short_path, index=False, na_rep='N\A')
@@ -123,53 +123,59 @@ short_summary.to_csv(file_short_path, index=False, na_rep='N\A')
 short_shorter_summary_columns = [
     'nxn', 'size MB', 'wordwidth',
     'Optimization Target', 'Total Area',
-    'Read Bandwidth', 
-    'Read Dynamic Energy', 
-    'Leakage Power', 'Read Dynamic Power'
+    'Read Bandwidth per mat', 'Mat Read Dynamic Energy',
+    'Read Dynamic Power per mat','Leakage Power'
 ]
 
 standardized_summary = result[short_shorter_summary_columns].copy()
 
 # Convert units
 standardized_summary.loc[:, 'Total Area'] = standardized_summary['Total Area'].apply(convert_to_um2)
-standardized_summary.loc[:, 'Read Bandwidth'] = standardized_summary['Read Bandwidth'].apply(convert_to_mbs)
+standardized_summary.loc[:, 'Read Bandwidth per mat'] = standardized_summary['Read Bandwidth per mat'].apply(convert_to_mbs)
 #standardized_summary.loc[:, 'Write Bandwidth'] = standardized_summary['Write Bandwidth'].apply(convert_to_mbs)
-standardized_summary.loc[:, 'Read Dynamic Energy'] = standardized_summary['Read Dynamic Energy'].apply(convert_to_pj)
+standardized_summary.loc[:, 'Mat Read Dynamic Energy'] = standardized_summary['Mat Read Dynamic Energy'].apply(convert_to_pj)
 #standardized_summary.loc[:, 'Write Dynamic Energy'] = standardized_summary['Write Dynamic Energy'].apply(convert_to_pj)
 standardized_summary.loc[:, 'Leakage Power'] = standardized_summary['Leakage Power'].apply(convert_to_mw)
-standardized_summary.loc[:, 'Read Dynamic Power'] = standardized_summary['Read Dynamic Power'].apply(convert_to_mw)
+standardized_summary.loc[:, 'Read Dynamic Power per mat'] = standardized_summary['Read Dynamic Power per mat'].apply(convert_to_mw)
 
 # Add the "mem req" column
 standardized_summary['mem req'] = standardized_summary['size MB'] * (144 / standardized_summary['size MB'])
 
-# Scale the rows based on 'size MB'
+# Scale the rows based on 'size MB' and create new columns for scaled values
 columns_to_scale = [
-    'Total Area', 'Read Bandwidth',
-    'Read Dynamic Energy',
-    'Leakage Power', 'Read Dynamic Power'
+    'Total Area',
+    'Leakage Power'
 ]
 
 for column in columns_to_scale:
-    standardized_summary[column] = standardized_summary[column] * (144 / standardized_summary['size MB'])
+    new_column_name = f"{column} x number banks"
+    standardized_summary[new_column_name] = standardized_summary[column] * (144 / standardized_summary['size MB'])
 
 # Rename columns to include units
 standardized_summary = standardized_summary.rename(columns={
     'Total Area': 'Total Area (um^2)',
-    'Read Bandwidth': 'Read Bandwidth (MB/s)',
-    #'Write Bandwidth': 'Write Bandwidth (MB/s)',
-    'Read Dynamic Energy': 'Read Dynamic Energy (pJ)',
-    #'Write Dynamic Energy': 'Write Dynamic Energy (pJ)',
+    'Total Area x number banks': 'Total Area x number banks (um^2)',
+    'Read Bandwidth per mat': 'Read Bandwidth per mat (MB/s)',
+    'Mat Read Dynamic Energy': 'Read Dynamic Energy per mat (pJ)',
     'Leakage Power': 'Leakage Power (mW)',
-    'Read Dynamic Power': 'Read Dynamic Power (mW)'
+    'Leakage Power x number banks': 'Leakage Power x number banks (mW)',
+    'Read Dynamic Power per mat': 'Read Dynamic Power per mat (mW)'
 })
 
-# Reorder columns to place 'mem req' after 'size MB'
+# Reorder columns to place 'mem req' after 'size MB' and scaled columns after original ones
 columns_order = standardized_summary.columns.tolist()
 size_mb_index = columns_order.index('size MB')
 columns_order.insert(size_mb_index + 1, columns_order.pop(columns_order.index('mem req')))
+
+# Move scaled columns after their original counterparts
+for column in columns_to_scale:
+    original_index = columns_order.index(f"{column} (um^2)" if column == 'Total Area' else f"{column} (mW)")
+    scaled_column = f"{column} x number banks ({('um^2' if column == 'Total Area' else 'mW')})"
+    columns_order.insert(original_index + 1, columns_order.pop(columns_order.index(scaled_column)))
+
 standardized_summary = standardized_summary[columns_order]
 
-file_standardized_path = 'summary_PCRAM_short_standardized.csv'
+file_standardized_path = 'summary_PCRAM_short_non_htree_standardized.csv'
 
 # Save the standardized summary to a new CSV file
 standardized_summary.to_csv(file_standardized_path, index=False, na_rep='N\A')

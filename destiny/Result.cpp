@@ -674,7 +674,9 @@ void Result::print(int indent) {
         //cerr<<" using bank partitionGranularity as 0\n";
         // address and control bit dynamics + read data output dynamic
         cout << string(indent, ' ') << " |--- TSV Dynamic Energy    = " << TO_JOULE(bank->tsvArray.writeDynamicEnergy * (bank->stackedDieCount-1) * bank->tsvArray.numReadBits + bank->tsvArray.readDynamicEnergy * bank->tsvArray.numDataBits * (bank->stackedDieCount-1)) << endl;
-        //cout<<"SEE bank->tsvArray.writeDynamicEnergy "<<TO_JOULE(bank->tsvArray.writeDynamicEnergy)<<"\n";
+        cout << string(indent, ' ') << " OUR READ TSV Dynamic Energy    = " << TO_JOULE(bank->tsvArray.readDynamicEnergy * bank->tsvArray.numDataBits * (bank->stackedDieCount-1)) << endl;
+		cout << string(indent, ' ') << " OUR WRITE TSV Dynamic Energy    = " << TO_JOULE(bank->tsvArray.writeDynamicEnergy * (bank->stackedDieCount-1) * bank->tsvArray.numReadBits) << endl;
+		//cout<<"SEE bank->tsvArray.writeDynamicEnergy "<<TO_JOULE(bank->tsvArray.writeDynamicEnergy)<<"\n";
 	//cout<<"SEE bank->tsvArray.numReadBits "<<bank->tsvArray.numReadBits<<"\n";
 	//cout<<"SEE bank->tsvArray.readDynamicEnergy "<<TO_JOULE(bank->tsvArray.readDynamicEnergy)<<"\n";
 	//cout<<"SEE bank->tsvArray.numDataBits "<<bank->tsvArray.numDataBits<<"\n";
