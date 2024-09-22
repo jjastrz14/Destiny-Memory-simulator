@@ -17,6 +17,8 @@ def convert_to_pj(value):
             return float(value.replace('mJ', '')) * 1000000000
         elif 'J' in value:
             return float(value.replace('J', '')) * 1000000000000
+        elif 'N/A' in value: 
+            return 0
         else: 
             raise ValueError(f"Unknown energy unit in value: {value}")
     return float(value)
@@ -29,6 +31,8 @@ def convert_to_mw(value):
             return float(value.replace('mW', ''))
         elif 'nW' in value:
             return float(value.replace('nW', '')) / 1000000
+        elif 'pW' in value: 
+            return float(value.replace('pW', '')) / 1000000000
         elif 'uW' in value:
             return float(value.replace('uW', '')) / 1000
         elif 'W' in value:
@@ -61,53 +65,83 @@ def convert_to_mbs(value):
             raise ValueError(f"Unknown bandwidth unit in value: {value}")
     return float(value)
 
-# Get all CSV files matching the pattern
-file_pattern = 'config_DATE/PCRAM_28_*x*_*MB_*_word_*_routing_*.csv'
-file_list = glob.glob(file_pattern)
+
+folder = "config_DATE"
+sub_folder = 'results'
+
+# Define file patterns
+file_patterns = [
+    f'{folder}/{sub_folder}/PCRAM/PCRAM_28_*x*_*MB_*_word_*_routing_*.csv',
+    f'{folder}/{sub_folder}/ReRAM/ReRAM_28_*x*_*MB_*_word_*_routing_*.csv',
+    f'{folder}/{sub_folder}/STTRAM/STTRAM_22_*x*_*MB_*_word_*_routing_*.csv'
+]
+
+#print(file_patterns)
+
+# Define regex patterns with technology names
+patterns = [
+    (r'PCRAM_28_(\d+)x(\d+)_(\d+)MB_(\d+)_word_(\d+)_routing_(\d+)\.csv', 'PCRAM'),
+    (r'ReRAM_28_(\d+)x(\d+)_(\d+)MB_(\d+)_word_(\d+)_routing_(\d+)\.csv', 'ReRAM'),
+    (r'STTRAM_22_(\d+)x(\d+)_(\d+)MB_(\d+)_word_(\d+)_routing_(\d+)\.csv', 'STTRAM')
+]
 
 # Initialize an empty list to store dataframes
 dfs = []
 
-# Updated regular expression pattern to extract n1, n2, r, and k values
-pattern = r'bank_PCRAM_28_(\d+)x(\d+)_(\d+)MB_(\d+)_word_(\d+)\.csv'
-
-# Process each file
-for file in file_list:
-    # Extract n1, n2, r, and k values from the filename
-    match = re.search(pattern, file)
-    if match:
-        n1, n2, r, k, _ = map(int, match.groups()) 
-        
-        # Read the CSV file, properly handling 'N\A' values and ensuring all columns are read
-        df = pd.read_csv(file, na_values=['N\A'], keep_default_na=False, header=0, index_col=False)
-        
-        # Replace 'N\A' with pandas NA
-        df = df.replace('N\A', pd.NA)
-        
-        # Add columns for n1xn2, r, k, size, and wordwidth at the beginning
-        df.insert(0, 'wordwidth', k)
-        df.insert(0, 'nxn', f'{n1}x{n2}')
-        df.insert(0, 'size MB', r)
+# Process each file pattern
+for file_pattern in file_patterns:
+    file_list = glob.glob(file_pattern)
     
-        # Append to the list of dataframes
-        dfs.append(df)
+    # Process each file
+    for file in file_list:
+        # Try each pattern until a match is found
+        for pattern, technology in patterns:
+            match = re.search(pattern, file)
+            if match:
+                n1, n2, r, k, _, routing = map(int, match.groups())
+                break
+        
+        if match:
+            try:
+                # Read the CSV file, properly handling 'N\A' values and ensuring all columns are read
+                df = pd.read_csv(file, na_values=['N\A'], keep_default_na=False, header=0, index_col=False)
+                
+                # Replace 'N\A' with pandas NA
+                df = df.replace('N\A', pd.NA)
+                
+                # Add columns for n1xn2, r, k, size, and wordwidth at the beginning
+                df.insert(0, 'wordwidth', k)
+                df.insert(0, 'nxn', f'{n1}x{n2}')
+                df.insert(0, 'active mats', n1*n2)
+                df.insert(0, 'wordwidth mat', int(k / (n1*n2)))
+                df.insert(0, 'size MB', r)
+                df.insert(0, 'Technology', technology)
+                
+                # Append to the list of dataframes
+                dfs.append(df)
+                
+            except pd.errors.EmptyDataError:
+                print(f"Warning: File {file} is empty or contains no valid data. Skipping.")
+                continue  # Skip to the next file
 
 # Concatenate all dataframes
 result = pd.concat(dfs, ignore_index=True)
 
-file_extended_path = 'summary_PCRAM_non_htree_extended.csv'
+file_extended_path = f'{folder}/summary_extended.csv'
 
 # Save the result to a new CSV file
 result.to_csv(file_extended_path, index=False, na_rep='N\A')
 
 # Generate short summary
 short_summary_columns = [
-    'Bank Organization', 'size MB', 'wordwidth', 'nxn',
+    'Technology', 'Bank Organization', 'size MB', 'wordwidth', 'nxn', 'wordwidth mat', 
     'Optimization Target', 'Total Area', 'Mat Area',
     'Read Latency', 'TSV Read Latency', 'Mat Read Latency',
     'Write Total Latency', 'Read Bandwidth', 'Read Bandwidth per mat',
     'Write Bandwidth', 'Read Dynamic Energy', 'TSV Read Dynamic Energy',
-    'Mat Read Dynamic Energy', 'Write Dynamic Energy', 'Leakage Power',
+    'Mat Read Dynamic Energy', 'H-tree Read Dynamic Energy', 
+    'Non-H-Tree Read Dynamic Energy',
+    'Write Dynamic Energy', 'Leakage Power',
     'TSV Leakage Power', 'Mat Leakage Power per mat', 'Read Dynamic Power',
     'Read Dynamic Power per mat','TSV Dynamic Power'
 ]
@@ -115,15 +149,16 @@ short_summary_columns = [
 # Create short summary dataframe
 short_summary = result[short_summary_columns].copy()
 
-file_short_path = 'summary_PCRAM_non_htree_short.csv'
+file_short_path = f'{folder}/summary_short.csv'
 
 # Save the short summary to a new CSV file
 short_summary.to_csv(file_short_path, index=False, na_rep='N\A')
 
 short_shorter_summary_columns = [
-    'nxn', 'size MB', 'wordwidth',
+    'Technology','nxn', 'size MB', 'wordwidth', 'wordwidth mat',
     'Optimization Target', 'Total Area',
-    'Read Bandwidth per mat', 'Mat Read Dynamic Energy',
+    'Read Bandwidth per mat', 'Mat Read Dynamic Energy', 'H-tree Read Dynamic Energy',
+    'Non-H-Tree Read Dynamic Energy',
     'Read Dynamic Power per mat','Leakage Power'
 ]
 
@@ -137,6 +172,8 @@ standardized_summary.loc[:, 'Mat Read Dynamic Energy'] = standardized_summary['M
 #standardized_summary.loc[:, 'Write Dynamic Energy'] = standardized_summary['Write Dynamic Energy'].apply(convert_to_pj)
 standardized_summary.loc[:, 'Leakage Power'] = standardized_summary['Leakage Power'].apply(convert_to_mw)
 standardized_summary.loc[:, 'Read Dynamic Power per mat'] = standardized_summary['Read Dynamic Power per mat'].apply(convert_to_mw)
+standardized_summary.loc[:, 'H-tree Read Dynamic Energy'] = standardized_summary['H-tree Read Dynamic Energy'].apply(convert_to_pj)
+standardized_summary.loc[:, 'Non-H-Tree Read Dynamic Energy'] = standardized_summary['Non-H-Tree Read Dynamic Energy'].apply(convert_to_pj)
 
 # Add the "mem req" column
 standardized_summary['mem req'] = standardized_summary['size MB'] * (144 / standardized_summary['size MB'])
@@ -146,6 +183,29 @@ columns_to_scale = [
     'Total Area',
     'Leakage Power'
 ]
+
+#calculations of energy and clock frequency per design: 
+
+
+RDP_mat = standardized_summary['Read Dynamic Power per mat']
+BW_mat = standardized_summary['Read Bandwidth per mat']
+rde_h_tree = standardized_summary['H-tree Read Dynamic Energy']
+non_h_tree = standardized_summary['Non-H-Tree Read Dynamic Energy']
+word_mat = standardized_summary['wordwidth mat']
+
+#(𝑅𝐷𝑃_𝑚𝑎𝑡  × 256𝐾𝐵 / 𝐵𝑊 )+𝑅𝐷𝐸_(H_tree/𝐻_𝑛𝑜𝑛𝑡𝑟𝑒𝑒 )      #+256 𝐾𝐵∗1𝑝𝐽/𝐵+𝑇𝑆𝑉_𝑡𝑟𝑎𝑛𝑠𝑓𝑒𝑟
+e_recon = (RDP_mat * 1e9) * (256 / 1024) * (1 / BW_mat) + (rde_h_tree + non_h_tree)
+#(mW * 1e9 * (KB /1024) * MB/s) *  + pJ 
+
+#𝑓_𝑚𝑒𝑚=𝑅𝑒𝑎𝑑 𝐵𝑊 (𝑚𝑎𝑡)/𝑤𝑜𝑟𝑑_𝑚𝑎𝑡 (MB/s / 16 bits)
+clock_freq = (BW_mat * 8) / word_mat #MHz 
+
+tsv_clock_freq = clock_freq * word_mat #MHz
+
+#standardized_summary.insert(0, 'Energy Recon (pJ)', e_recon)
+#standardized_summary.insert(0, 'Energy Recon (uJ)', e_recon * 1e-6)
+#standardized_summary.insert(0, 'Clock freq (MHz)', clock_freq)
+
 
 for column in columns_to_scale:
     new_column_name = f"{column} x number banks"
@@ -175,7 +235,12 @@ for column in columns_to_scale:
 
 standardized_summary = standardized_summary[columns_order]
 
-file_standardized_path = 'summary_PCRAM_short_non_htree_standardized.csv'
+standardized_summary['Clock freq (MHz)'] = clock_freq
+standardized_summary['TSV clock freq (MHz)'] = tsv_clock_freq
+standardized_summary['Energy Recon (uJ)'] = e_recon * 1e-6
+#standardized_summary['Energy Recon (pJ)'] = e_recon
+
+file_standardized_path = f'{folder}/summary_short_standardized.csv'
 
 # Save the standardized summary to a new CSV file
 standardized_summary.to_csv(file_standardized_path, index=False, na_rep='N\A')

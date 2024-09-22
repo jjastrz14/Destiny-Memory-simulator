@@ -214,11 +214,11 @@ int main(int argc, char *argv[])
 		//	temp << "_CUR";
 		//temp << ".csv";
 		
-		//std::string configDate = "config_DATE"; // This should match the prefix in inputFileName
-		std::string resultsFolder = "results";
+		std::string configDate = "results"; // This should match the prefix in inputFileName
+		std::string resultsFolder = configDate + "/STTRAM";
 
 		// Create directory
-		//createDirectoryIfNotExists(configDate);
+		createDirectoryIfNotExists(configDate);
 
 		// Create config_DATE/results directory
 		createDirectoryIfNotExists(resultsFolder);

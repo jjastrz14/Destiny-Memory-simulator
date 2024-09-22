@@ -675,7 +675,7 @@ void Result::print(int indent) {
         // address and control bit dynamics + read data output dynamic
         cout << string(indent, ' ') << " |--- TSV Dynamic Energy    = " << TO_JOULE(bank->tsvArray.writeDynamicEnergy * (bank->stackedDieCount-1) * bank->tsvArray.numReadBits + bank->tsvArray.readDynamicEnergy * bank->tsvArray.numDataBits * (bank->stackedDieCount-1)) << endl;
         cout << string(indent, ' ') << " OUR READ TSV Dynamic Energy    = " << TO_JOULE(bank->tsvArray.readDynamicEnergy * bank->tsvArray.numDataBits * (bank->stackedDieCount-1)) << endl;
-		cout << string(indent, ' ') << " OUR WRITE TSV Dynamic Energy    = " << TO_JOULE(bank->tsvArray.writeDynamicEnergy * (bank->stackedDieCount-1) * bank->tsvArray.numReadBits) << endl;
+		cout << string(indent, ' ') << " OUR WRITE TSV Dynamic Energy    = " << TO_JOULE(bank->tsvArray.writeDynamicEnergy * (bank->stackedDieCount-1) * bank->tsvArray.numReadBits)<< endl;
 		//cout<<"SEE bank->tsvArray.writeDynamicEnergy "<<TO_JOULE(bank->tsvArray.writeDynamicEnergy)<<"\n";
 	//cout<<"SEE bank->tsvArray.numReadBits "<<bank->tsvArray.numReadBits<<"\n";
 	//cout<<"SEE bank->tsvArray.readDynamicEnergy "<<TO_JOULE(bank->tsvArray.readDynamicEnergy)<<"\n";
@@ -1648,8 +1648,8 @@ void Result::print_to_csv(ofstream &outputFile, int indent) {
 		outputFile << string(indent, ' ') << "N/A" << ",";
 
 	
-	if (cell->memCellType == PCRAM || cell->memCellType == FBRAM || cell->memCellType ==MRAM ||
-			(cell->memCellType == memristor && (cell->accessType == CMOS_access || cell->accessType == BJT_access || cell->memCellLevel!=SLC))) {
+	if (cell->memCellType == PCRAM || cell->memCellType == FBRAM || cell->memCellType ==MRAM || 
+			(cell->memCellType == memristor && (cell->accessType == CMOS_access || cell->accessType == BJT_access || cell->accessType == diode_access || cell->memCellLevel!=SLC))) { //oszustwo here z dioda!
 		outputFile << string(indent, ' ')  << TO_SECOND(bank->writeLatency) << ","; //Write Total Latency (ns)
 		outputFile << string(indent, ' ')  << TO_SECOND(bank->resetLatency) << ","; //RESET write Latency (ns)
 		if (cell->memCellType==MRAM && cell->memCellLevel!=SLC){
@@ -1767,6 +1767,7 @@ void Result::print_to_csv(ofstream &outputFile, int indent) {
         outputFile << string(indent, ' ') << " - Shift Latency = " << TO_SECOND(bank->shiftLatency) << ",";
     }
 	*/
+	}
 	double numReadouts =  (double)bank->mat.subarray.numColumn / ((double)bank->blockSize / 
 	(bank->numActiveMatPerColumn * bank->numActiveMatPerRow *  bank->numActiveSubarrayPerRow * bank->numActiveSubarrayPerColumn)) ;
 	//cout << string(indent, ' ') << "- OUR number consecutive Readouts per subarray  = " << numReadouts << endl;
@@ -1856,7 +1857,7 @@ void Result::print_to_csv(ofstream &outputFile, int indent) {
 	}
 		
 	if (cell->memCellType == PCRAM || cell->memCellType == FBRAM || cell->memCellType == DWM || cell->memCellType == MRAM ||
-			(cell->memCellType == memristor && (cell->accessType == CMOS_access || cell->accessType == BJT_access))) {
+			(cell->memCellType == memristor && (cell->accessType == CMOS_access || cell->accessType == BJT_access || cell->accessType == diode_access))) {
 		if(cell->memCellType==PCRAM && cell->memCellLevel!=SLC){
 			outputFile << string(indent, ' ') << TO_JOULE(bank->resetDynamicEnergy+bank->setDynamicEnergy) << ","; //Set + Reset Dynamic Energy (pJ)
 			//if (inputParameter->writeScheme==set_before_reset)
@@ -2104,6 +2105,6 @@ void Result::print_to_csv(ofstream &outputFile, int indent) {
 	}
 
 }
-}
+
 
 
