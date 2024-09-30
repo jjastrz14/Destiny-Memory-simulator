@@ -1,0 +1,5 @@
+orginal repository: 
+https://bitbucket.org/sparsh_mittal/destiny_v2/src/master/
+
+How to run an example: 
+~ ./destiny config/sample_2D_RRAM.cfg 
