@@ -195,6 +195,7 @@ int main(int argc, char *argv[])
     ofstream outputFile;
 	string outputFileName;
 	string outputFileName_prefix;
+	string cell_type_name_folder;
 	/*Uncomment if to save only when is full_exploration!*/
 	//if (inputParameter->optimizationTarget == full_exploration||inputParameter->printAllOptimals) {
 		stringstream temp;
@@ -213,37 +214,6 @@ int main(int argc, char *argv[])
 		//else
 		//	temp << "_CUR";
 		//temp << ".csv";
-		
-		std::string configDate = "results"; // This should match the prefix in inputFileName
-		std::string resultsFolder = configDate + "/STTRAM";
-
-		// Create directory
-		createDirectoryIfNotExists(configDate);
-
-		// Create config_DATE/results directory
-		createDirectoryIfNotExists(resultsFolder);
-
-		outputFileName_prefix = temp.str();
-
-		// Extract just the filename from inputFileName
-		size_t lastSlash = inputFileName.find_last_of("/");
-		std::string baseFileName;
-		if (lastSlash != std::string::npos) {
-			baseFileName = inputFileName.substr(lastSlash + 1);
-		} else {
-			baseFileName = inputFileName;
-		}
-
-		int extIdx = baseFileName.find_last_of(".");
-		outputFileName = resultsFolder + "/" + baseFileName.substr(0, extIdx) + "_" + outputFileName_prefix + ".csv";
-
-		outputFile.open(outputFileName.c_str(), std::ios::out | std::ios::trunc);
-		if (!outputFile.is_open()) {
-			std::cerr << "Could not open file " << outputFileName << ": " << std::strerror(errno) << std::endl;
-			exit(-1);
-		} else {
-			std::cout << "Successfully opened file: " << outputFileName << std::endl;
-		}
 	//}
 
     int numCellTypes = inputParameter->fileMemCell.size();
@@ -332,6 +302,66 @@ int main(int argc, char *argv[])
         }
 	}
 
+	//preparation of the output file name 
+
+	if (cell->memCellType == SRAM)
+		cell_type_name_folder = "SRAM";
+	else if (cell->memCellType == DRAM)
+		cell_type_name_folder = "DRAM";
+	else if (cell->memCellType == eDRAM)
+		cell_type_name_folder = "eDRAM";
+	else if (cell->memCellType == MRAM)
+		cell_type_name_folder = "MRAM";
+	else if (cell->memCellType == PCRAM)
+		cell_type_name_folder = "PCRAM";
+	else if (cell->memCellType == FBRAM)
+		cell_type_name_folder = "FBRAM";
+	else if (cell->memCellType == memristor)
+		cell_type_name_folder = "ReRAM"; //or memristor
+	else if (cell->memCellType == SLCNAND)
+		cell_type_name_folder = "SLCNAND"; //single level NAND
+	else if (cell->memCellType == MLCNAND)
+		cell_type_name_folder = "MLCNAND"; // multilevel NAND
+	else if (cell->memCellType == DWM)
+		cell_type_name_folder = "DWM";
+	else {
+		cout << "Warning: Unkonw cell type name!";
+		cell_type_name_folder = "results";
+	}
+		
+	std::string configDate = "results"; // This should match the prefix in inputFileName
+	std::string resultsFolder = configDate + "/" + cell_type_name_folder;
+
+	// Create directory
+	createDirectoryIfNotExists(configDate);
+
+	// Create config_DATE/results directory
+	createDirectoryIfNotExists(resultsFolder);
+
+	outputFileName_prefix = temp.str();
+
+	// Extract just the filename from inputFileName
+	size_t lastSlash = inputFileName.find_last_of("/");
+	std::string baseFileName;
+	if (lastSlash != std::string::npos) {
+		baseFileName = inputFileName.substr(lastSlash + 1);
+	} else {
+		baseFileName = inputFileName;
+	}
+
+	int extIdx = baseFileName.find_last_of(".");
+	outputFileName = resultsFolder + "/" + baseFileName.substr(0, extIdx) + "_" + outputFileName_prefix + ".csv";
+
+	outputFile.open(outputFileName.c_str(), std::ios::out | std::ios::trunc);
+	if (!outputFile.is_open()) {
+		std::cerr << "Could not open file " << outputFileName << ": " << std::strerror(errno) << std::endl;
+		exit(-1);
+	} else {
+		std::cout << "Successfully opened file: " << outputFileName << std::endl;
+		std::cout << " " << std::endl;
+	}
+
+	// check what to do if you want to print cache and tag
 	if (inputParameter->optimizationTarget != full_exploration) {
 		if (totalSolutions > 0 && !inputParameter->printAllOptimals) {
             cell = bestDataResults[0][inputParameter->optimizationTarget].cellTech;
