@@ -18,6 +18,7 @@ This directory contains example configuration files for different memory technol
   - MLC/ - Multi-Level Cell
 - SOTRAM/ - Spin-Orbit Torque RAM configurations
 - STTRAM/ - Spin-Transfer Torque RAM configurations
+- others: DWM - Domain Wall Memory and others configurations
 
 ## File Types
 - .cell files: Memory cell parameters
