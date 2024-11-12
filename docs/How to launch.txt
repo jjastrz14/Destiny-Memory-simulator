@@ -1,8 +1,0 @@
-1. Aprire Ubuntu (WSL)
-2. Andare nella directory: /PhD/NIMBLE AI/sparsh_mittal-destiny_v2-276c0ec3e9b8/destiny
-3. Digitare: code .
-
-
-DEBUG:
-1. Cambiare nel file .vscode/launch.json il nome del file .cfg da analizzare, nella sezione "configurations"->"args"
-2. Lanciare l debug dal main.cpp
