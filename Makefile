@@ -46,7 +46,8 @@ DEP := $(OBJ:.o=.d)
 BUILDDIRS := $(patsubst $(SRCDIR)%,$(BUILDDIR)%,$(SRCDIRS))
 
 # Default target
-.PHONY: all clean dbg dir
+.PHONY: all clean cleanall dbg dir
+
 all: CXXFLAGS += -g -O3 -mtune=native
 all: dir $(target)
 
@@ -67,9 +68,26 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -MMD -MP -c $< -o $@
 
-# Clean build files
+# Clean only build directory
 clean:
+	@echo "Cleaning build files..."
 	$(RM) $(target) $(BUILDDIR)
+	@echo "Cleaning Makefile dependency file..."
+	$(RM) Makefile.dep
+
+# Clean everything including old obj directory
+cleanall: clean
+	@echo "Cleaning old obj directory..."
+	$(RM) obj
+	@echo "Cleaning all temporary and object files..."
+	find . -name '*~' -delete
+	find . -name '*.o' -delete
+	find . -name '*.d' -delete
+	@echo "Clean complete!"
+
+# Print variables for debugging
+print-%:
+	@echo $* = $($*)
 
 # Include dependency files
 -include $(DEP)
