@@ -1,28 +1,23 @@
 {
   "version": "2.0.0",
   "tasks": [
-    {
-      "type": "shell",
-      "label": "clang++ build active file",
-      "command": "/usr/bin/clang++",
-      "args": [
-        "-std=c++17",
-        "-g",
-        "-arch", "arm64",  // Use "x86_64" for Intel Macs
-        "${file}",
-        "-o",
-        "${fileDirname}/${fileBasenameNoExtension}"
-      ],
-      "options": {
-        "cwd": "${workspaceFolder}"
+      {
+          "label": "build-debug",
+          "type": "shell",
+          "command": "make",
+          "args": ["debug"],
+          "group": {
+              "kind": "build",
+              "isDefault": true
+          },
+          "problemMatcher": ["$gcc"]
       },
-      "problemMatcher": [
-        "$gcc"
-      ],
-      "group": {
-        "kind": "build",
-        "isDefault": true
+      {
+          "label": "clean",
+          "type": "shell",
+          "command": "make",
+          "args": ["clean"],
+          "problemMatcher": []
       }
-    }
   ]
 }

@@ -1,15 +1,25 @@
 {
   "version": "0.2.0",
   "configurations": [
-
-    {
-      "name": "clang++ - Build and debug active file",
-      "type": "lldb",
-      "request": "launch",
-      "program": "${workspaceFolder}/destiny", 
-      "args": ["${workspaceFolder}/destiny/config/sample_PCRAM_NIMBLE_single_bank_28_debug.cfg"], 
-      "cwd": "${workspaceFolder}",
-      "preLaunchTask": "clang++ build active file"
-    }
+      {
+          "name": "Debug Destiny",
+          "type": "cppdbg",
+          "request": "launch",
+          "program": "${workspaceFolder}/destiny",
+          "args": [], // Add your program arguments here
+          "stopAtEntry": false,
+          "cwd": "${workspaceFolder}",
+          "environment": [],
+          "externalConsole": false,
+          "MIMode": "lldb",  // Use "gdb" if you're on Linux
+          "preLaunchTask": "build-debug",
+          "setupCommands": [
+              {
+                  "description": "Enable pretty-printing for lldb",
+                  "text": "-enable-pretty-printing",
+                  "ignoreFailures": true
+              }
+          ]
+      }
   ]
 }

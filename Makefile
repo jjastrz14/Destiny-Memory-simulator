@@ -11,6 +11,12 @@ SRCDIR := src
 INCDIR := include
 BUILDDIR := build
 
+# Debug and optimization flags
+DEBUG_FLAGS := -ggdb -g -DDEBUG
+SANITIZE_FLAGS := -fsanitize=address -fsanitize=undefined
+EXTRA_DEBUG_FLAGS := -Wall -Wextra -Wpedantic -Werror
+OPTIMIZE_FLAGS := -O3 -mtune=native
+
 # Source directories
 SRCDIRS := $(SRCDIR) \
            $(SRCDIR)/core \
@@ -27,8 +33,7 @@ INCDIRS := $(INCDIR) \
            $(INCDIR)/tsv \
            $(INCDIR)/utils
 
-# define build options
-# compile options
+# Base compile options
 CXXFLAGS := -Wall $(foreach d, $(INCDIRS), -I$d)
 # link options
 LDFLAGS :=
@@ -45,15 +50,25 @@ DEP := $(OBJ:.o=.d)
 # Create subdirectories in build directory
 BUILDDIRS := $(patsubst $(SRCDIR)%,$(BUILDDIR)%,$(SRCDIRS))
 
-# Default target
-.PHONY: all clean cleanall dbg dir
+# Build types
+.PHONY: all clean cleanall debug debugsanitize debugstrict dir
 
-all: CXXFLAGS += -g -O3 -mtune=native
+# Default release build (optimized)
+all: CXXFLAGS += $(OPTIMIZE_FLAGS)
 all: dir $(target)
 
-# Debug build
-dbg: CXXFLAGS += -ggdb -g
-dbg: dir $(target)
+# Basic debug build
+debug: CXXFLAGS += $(DEBUG_FLAGS)
+debug: dir $(target)
+
+# Debug build with sanitizers
+debugsanitize: CXXFLAGS += $(DEBUG_FLAGS) $(SANITIZE_FLAGS)
+debugsanitize: LDFLAGS += $(SANITIZE_FLAGS)
+debugsanitize: dir $(target)
+
+# Strict debug build with all warnings as errors
+debugstrict: CXXFLAGS += $(DEBUG_FLAGS) $(EXTRA_DEBUG_FLAGS)
+debugstrict: dir $(target)
 
 # Create build directories
 dir:

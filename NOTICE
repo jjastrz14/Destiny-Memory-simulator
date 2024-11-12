@@ -1,4 +1,52 @@
-This software utilizes the framework for modeling 2D SRAM and 2D NVM from NVSim.
-Also, the coarse- and fine-grained TSV (through silicon via) models are utilized from CACTI-3DD. 
+# NOTICE
 
-This software is released under modified BSD license, see the file LICENSE.
+## Project Overview
+This repository contains a modified version of the DESTINY (Design Space Exploration of 3D Stacked SRAM/DRAM/NVM Integrated Memory) simulator. The project combines and builds upon three significant academic works in computer architecture simulation.
+
+## Project Heritage
+
+### DESTINY
+- Original Development: Indian Institute of Technology Hyderabad
+- Year: 2017-2019
+- Purpose: Comprehensive tool for modeling 3D and Multi-Level Cell memory
+- Components: Core memory modeling framework, 3D stacking support
+- Original Repository: https://bitbucket.org/sparsh_mittal/destiny_v2/src/master/
+
+### CACTI3DD
+- Original Development: Hewlett-Packard Development Company, L.P.
+- Year: 2012
+- Purpose: 3D DRAM architecture modeling
+- Components: Used for 3D memory architecture modeling capabilities
+- Heritage: Based on CACTI memory modeling framework
+
+### NVSim
+- Original Development: 
+  - Microsystems Design Laboratory (MDL)
+  - Department of Computer Science and Engineering, The Pennsylvania State University
+  - Exascale Computing Lab, Hewlett-Packard Company
+- Year: 2012-2013
+- Purpose: Area, timing and power modeling for volatile and non-volatile memories
+- Original Authors:
+  - Cong Xu (Penn State University)
+  - Xiangyu Dong (Penn State University)
+- Components: Non-volatile memory modeling capabilities
+
+## Current Version
+Modified and maintained by Jakub Jastrzebski
+Year: 2024
+
+### Major Modifications and Improvements
+- 
+- 
+- 
+
+### Code Organization
+The current repository organizes the codebase into clear components:
+- `src/`: Source code files
+- `include/`: Header files
+- `config/`: Example configuration files for different memory technologies
+- `Doc/`: Documentation and technical references
+
+## Additional Information
+For detailed license information, please see the LICENSE file in this repository.
+For usage instructions and documentation, please refer to the README.md file.
