@@ -165,7 +165,6 @@ target (can be used to find the best of multiple technology inputs). This is use
 -ForceBankA: Same as ForceBank in NVSim, except forcing the number of active Mats is not required.
 -ForceMatA: Same as ForceMat in NVSim, except forcing the number of active Subarrays is not required.
 
- 
 
 -------------------------------------------------------
 
