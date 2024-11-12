@@ -65,7 +65,7 @@ def convert_to_mbs(value):
             raise ValueError(f"Unknown bandwidth unit in value: {value}")
     return float(value)
 
-
+#EDIT this lines defining a path to your results/config folder
 folder = "config_DATE"
 sub_folder = 'results'
 

@@ -1,12 +1,11 @@
 # Configuration Files
 
-This directory contains configuration files for different memory technologies:
+This directory contains example configuration files for different memory technologies attached to orginal DESTINY repository (see README/NOTICE):
 
 ## Directory Structure
 - 2D/ - Traditional 2D memory configurations
   - RRAM/
   - eDRAM/
-  - SRAM/
 - 3D/ - 3D stacked memory configurations
   - RRAM/
   - eDRAM/
@@ -17,7 +16,6 @@ This directory contains configuration files for different memory technologies:
 - PCRAM/ - Phase Change Memory configurations
   - base/ - Basic configurations
   - MLC/ - Multi-Level Cell
-  - NIMBLE/ - NIMBLE specific configurations
 - SOTRAM/ - Spin-Orbit Torque RAM configurations
 - STTRAM/ - Spin-Transfer Torque RAM configurations
 
@@ -26,3 +24,4 @@ This directory contains configuration files for different memory technologies:
 - .cfg files: Memory array configuration parameters
 
 ## Usage
+see README, remember to define the path to .cell file used in the .cfg file!
