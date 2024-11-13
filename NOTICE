@@ -36,9 +36,9 @@ Modified and maintained by Jakub Jastrzebski
 Year: 2024
 
 ### Major Modifications and Improvements
-- 
-- 
-- 
+- input/output modifications
+- new calculation parameters
+- enhanced documentation
 
 ### Code Organization
 The current repository organizes the codebase into clear components:

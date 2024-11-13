@@ -25,9 +25,18 @@ For more details refer to [DESTINY publication](docs/literature/2015_DESTINY%20-
 
 DESTINY is developed in C++ and can be compiled on both Microsoft Windows and Unix-like operating systems.
 
+### Prerequisites
+- C++ compiler (GCC recommended)
+- Make build system
+
 ### Building on Linux
 ```bash
-$ make
+# Clone the repository
+git clone https://github.com/your-username/destiny.git
+cd destiny
+
+# Build the project
+make
 ```
 
 ## Usage
@@ -39,7 +48,7 @@ $ ./destiny
 
 For user-defined configuration files in a different directory:
 ```bash
-$ ./destiny <path-to-file/file>.cfg
+$ ./destiny <path-to/file>.cfg
 ```
 
 For configuration files in config folder you can also: 
@@ -53,10 +62,37 @@ Remember: .cfg file can refer to the another .cell file, so the exact path for .
 
 ## Running First Simulation
 
+To develop your first simulation:
 
+1. **Prepare Configuration Files**
+   - Create .cell and .cfg files according to available input options
+   - See: [Configuration Parameters](#configuration-parameters)
 
-see: [CACTI](docs/literature/2008_CACTI_5.1_technical_report_HPL.pdf)
+2. **Run Simulation**
+   - Use single run command or
+   - use bash script available in `/scripts` for multiple simulations
 
+3. **Collect Results**
+   - Output is provided in:
+     - Terminal output
+     - Single .csv file (stored in `/results/type-of-technology`)
+   - For multiple simulations, use our [dataset concatenation script](scripts/dataset_concatenate.py)
+
+### Result Processing
+The dataset concatenation script requires:
+- Python with numpy and pandas libraries
+- Correct path and naming convention setup
+- Outputs multiple .csv files based on your data requirements
+
+This DESTINY's version provides you output in terminal and also as single .csv file stored in /results/type-of-technology (sorted by memory technology). If you run several simulations you might want to concatanate .csv-s into one file. To do this use [Python-script](scripts/dataset_concatenate.py) changing the naming convention and path to files in the .py before. Script is able to provide you several csv files depending on data which our are intrested in. First .csv is always a full summary and next ones can be defined in the code. To run this script you need numpy and pandas libraries.
+
+To understand the output of the destiny refer to: 
+- [Documentation](docs/literature/2015_DESTINY_Documentation.pdf)
+
+To understand the structre and logic of the simulator refer to:
+- [CACTI](docs/literature/2008_CACTI_5.1_technical_report_HPL.pdf) - introduces the core of the source code, main concepts of the design of memory array  
+- [NVsim](docs/literature/2012-NVsim-TCAD.pdf) - introduces the nonvolatile technologies to CACTI code
+- [DESTINY](docs/literature/2015_DESTINY%20-%20A%20Comprehensive%20Tool%20with%203D%20and%20Multi-Level%20Cell%20Memory%20Modeling%20Capability.pdf) - main work of this simulator
 
 ## Configuration Parameters
 
@@ -68,10 +104,12 @@ Where more or less all possible input parameters where collected.
 
 ## Support
 
-Authors suggest for questions and support:
+### Official Channels
 - Mailing List: destiny-help@elist.ornl.gov
 - Archive: [Previous Discussions](https://elist.ornl.gov/pipermail/destiny-help/)
-- This repository mailing list: jakubandrzej.jastrzebski@polimi.it
+
+### Repository Maintainer
+- Email: jakubandrzej.jastrzebski@polimi.it
 
 ## Citing This Work
 
@@ -111,7 +149,7 @@ Support for DESTINY is provided on a best-effort basis. For receiving announceme
  destiny-help@elist.ornl.gov by visiting the following 
 webpage: https://elist.ornl.gov/mailman/listinfo/destiny-help 
 
-check: [Get in touch](##Get-in-touch)
+check: [Get in touch](##get-in-touch)
 
 
 ## Sponsors
@@ -122,7 +160,7 @@ check: [Get in touch](##Get-in-touch)
 
 ## License and Disclaimer
 
-This is not an officially supported Politecnico di Milano product.
+This is not a Politecnico di Milano product.
 
 Copyright 2024 Politecnico di Milano.
 
