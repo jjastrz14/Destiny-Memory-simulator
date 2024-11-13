@@ -18,11 +18,8 @@
 *.swp
 *~
 
-
-
 # macOS system files
 .DS_Store
-.vscode
 
 # Python files
 __pycache__/
