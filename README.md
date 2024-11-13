@@ -38,7 +38,6 @@ cd destiny
 # Build the project
 make
 ```
-
 ## Usage
 
 Run DESTINY with example configuration file:
@@ -56,7 +55,6 @@ For configuration files in config folder you can also:
 $ cd config 
 $ ../destiny <file.cfg>
 ``` 
-
 Assuming that <file>.cfg is present in the topfolder/config folder, whereas "destiny" binary is present in "topfolder".
 Remember: .cfg file can refer to the another .cell file, so the exact path for .cell file needs to be provided in .cfg file. 
 
@@ -92,7 +90,7 @@ To understand the output of the destiny refer to:
 To understand the structre and logic of the simulator refer to:
 - [CACTI](docs/literature/2008_CACTI_5.1_technical_report_HPL.pdf) - introduces the core of the source code, main concepts of the design of memory array  
 - [NVsim](docs/literature/2012-NVsim-TCAD.pdf) - introduces the nonvolatile technologies to CACTI code
-- [DESTINY](docs/literature/2015_DESTINY%20-%20A%20Comprehensive%20Tool%20with%203D%20and%20Multi-Level%20Cell%20Memory%20Modeling%20Capability.pdf) - main work of this simulator
+- [DESTINY](docs/literature/2015_DESTINY%20-%20A%20Comprehensive%20Tool%20with%203D%20and%20Multi-Level%20Cell%20Memory%20Modeling%20Capability.pdf) - DESTINY's publication
 
 ## Configuration Parameters
 
@@ -101,6 +99,29 @@ To understand possible parameters which can be defined in .cfg and .cell files p
 - [Cell parameters](docs/cell_parameters.md)
 
 Where more or less all possible input parameters where collected. 
+
+## Parameters Search Space 
+
+Before running DESTINY simulations, you can explore valid configuration parameters using our search space analysis tools. These tools help you:
+
+- Determine proper memory capacity values
+- Validate wordwidth parameters
+- Analyze possible mat organizations
+- Avoid configuration errors in DESTINY
+
+### Search Space Tools
+
+We provide two implementations for search space analysis:
+- [Python Implementation](scripts/DESTINY_search_space.py)
+- [MATLAB Implementation](scripts/DESTINY_search_space.m)
+
+These tools are particularly useful when:
+- Working with specific memory designs
+- Requiring fixed mat organization
+- Need to prevalidate configuration parameters
+- Want to explore possible design spaces before simulation
+
+The DESTINY search space script allow for preexamination of the possible capacity values, wordwidth and mats organisation (which are later defined in the configuration files). This scripts are just the suggestion for possilbe inputs in .cfg files. 
 
 ## Support
 
