@@ -76,7 +76,7 @@ To develop your first simulation:
      - Single .csv file (stored in `/results/type-of-technology`)
    - For multiple simulations, use our [dataset concatenation script](scripts/dataset_concatenate.py)
 
-### Result Processing
+## Result Processing
 The dataset concatenation script requires:
 - Python with numpy and pandas libraries
 - Correct path and naming convention setup
