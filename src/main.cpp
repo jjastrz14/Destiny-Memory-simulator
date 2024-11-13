@@ -1,6 +1,6 @@
 //Copyright (c) 2017-2019, IIT Hyderabad. See LICENSE file in the top-level directory
 // This file contains code from NVSim, (c) 2012-2013,  Pennsylvania State University 
-//and Hewlett-Packard Company. See LICENSE_NVSim file in the top-level directory.
+//and Hewlett-Packard Company. See LICENSE file in the top-level directory.
 //No part of DESTINY Project, including this file, may be copied,
 //modified, propagated, or distributed except according to the terms
 //contained in the LICENSE file.
