@@ -33,7 +33,7 @@ DESTINY is developed in C++ and can be compiled on both Microsoft Windows and Un
 ```bash
 # Clone the repository
 git clone https://github.com/jjastrz14/Destiny-Memory-simulator
-cd destiny
+cd Destiny-Memory-simulator
 
 # Build the project
 make

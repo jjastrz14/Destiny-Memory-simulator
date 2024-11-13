@@ -14,6 +14,7 @@
 #include <cassert>
 #include <sys/stat.h>
 #include <errno.h>
+#include <cstring>
 #include "InputParameter.h"
 #include "MemCell.h"
 #include "RowDecoder.h"
@@ -367,11 +368,12 @@ int main(int argc, char *argv[])
             cell = bestDataResults[0][inputParameter->optimizationTarget].cellTech;
             cell->PrintCell();
 
-			if (inputParameter->designTarget == cache)
+			if (inputParameter->designTarget == cache){
 				bestDataResults[0][inputParameter->optimizationTarget].printAsCache(bestTagResults[0][inputParameter->optimizationTarget], inputParameter->cacheAccessMode);
-			else
+			} else {
 				bestDataResults[0][inputParameter->optimizationTarget].print();
 				bestDataResults[0][inputParameter->optimizationTarget].print_to_csv(outputFile);
+			}
         } else if (totalSolutions > 0) {
             cell->PrintCell();
 
