@@ -1,5 +1,7 @@
 ![DESTINY Logo](docs/destiny_framework.png)
 
+huje muje dziekie weze
+
 # DESTINY: 3D Design-Space Exploration Tool
 
 DESTINY (3D dEsign-Space exploraTIon Tool for SRAM, eDRAM and Non-volatile memorY) is a comprehensive modeling tool for both conventional and emerging memory technologies. It extends the capabilities of tools like CACTI, CACTI-3DD, and NVSim to provide extensive 3D memory modeling capabilities.
