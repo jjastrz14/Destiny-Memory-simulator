@@ -32,7 +32,7 @@ DESTINY is developed in C++ and can be compiled on both Microsoft Windows and Un
 ### Building on Linux
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/destiny.git
+git clone https://github.com/jjastrz14/Destiny-Memory-simulator
 cd destiny
 
 # Build the project
@@ -121,7 +121,7 @@ These tools are particularly useful when:
 - Need to prevalidate configuration parameters
 - Want to explore possible design spaces before simulation
 
-The DESTINY search space script allow for preexamination of the possible capacity values, wordwidth and mats organisation (which are later defined in the configuration files). This scripts are just the suggestion for possilbe inputs in .cfg files. 
+The DESTINY search space script allow for preexamination of the possible capacity values, wordwidth and mats organisation (which are later defined in the configuration files). This scripts are suggestions for possilbe inputs in .cfg files. 
 
 ## Support
 
