@@ -18,10 +18,15 @@
 *.swp
 *~
 
-# specific
-.DS_Store
-.vscode
+# VS Code settings
+.vscode/
 
+# macOS system files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
 # Python files
 __pycache__/
 *.py[cod]
