@@ -18,8 +18,9 @@
 *.swp
 *~
 
-# macOS specific
+# specific
 .DS_Store
+.vscode
 
 # Python files
 __pycache__/
