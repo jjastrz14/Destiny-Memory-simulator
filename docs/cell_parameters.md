@@ -1,6 +1,6 @@
 # Memory Cell Parameters
 
-This document describes the configuration parameters for memory cells. Each parameter is described in the following format:
+This document list all possible configuration parameters for memory cells. List was created based on the notes in the code of DESTINY. In case of any ambiguity see: InputParameter.cpp, InputParameter.h. Each parameter is described in the following format:
 
 - **Parameter Name**: Description of what the parameter represents, Unit: unit
     Parameter Name: possible_value1; possible_value2; possible_value3; else: default_value
