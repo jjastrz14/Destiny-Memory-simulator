@@ -91,7 +91,7 @@ Capacity: -Capacity (B): int ; -Capacity (KB): int , -Capacity (MB): int
     LocalWireUseLowSwing: Yes else: no 
 
 - **GlobalWireType**: Global wiring type
-    GlobalWireType:  LocalAggressive, 
+    GlobalWireType: LocalAggressive, 
                     LocalConservative, 
                     SemiAggressive, 
                     SemiConservative, 
