@@ -188,6 +188,7 @@ int main(int argc, char *argv[])
 		alpha = (inputParameter->processNode - 22.0) / 10;
 	} else {
 		//TO-DO: technology node < 22 nm
+		cout<< "Warning: Technology node < 22 nm not yet available";
 	}
 
 	tech->InterpolateWith(techHigh, alpha);
@@ -203,7 +204,7 @@ int main(int argc, char *argv[])
 		//temp << inputParameter->outputFilePrefix << "_" << inputParameter->capacity / 1024 << "K_" << inputParameter->wordWidth
 		//		<< "_" << inputParameter->associativity;
 
-		temp << inputParameter->outputFilePrefix << "_" << inputParameter->capacity / 1024 / 1024 << "MB_" 
+		temp << inputParameter->outputFilePrefix << "_" << inputParameter->capacity / 1024 / 1024 << "_MB_" 
 			 << inputParameter->wordWidth << "_word_" << inputParameter->optimizationTarget << "_routing_" << inputParameter->routingMode; 
 
 		//if (inputParameter->internalSensing)

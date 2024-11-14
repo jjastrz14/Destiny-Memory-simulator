@@ -71,18 +71,18 @@ sub_folder = 'results'
 
 # Define file patterns
 file_patterns = [
-    f'{folder}/{sub_folder}/PCRAM/PCRAM_28_*x*_*MB_*_word_*_routing_*.csv',
-    f'{folder}/{sub_folder}/ReRAM/ReRAM_28_*x*_*MB_*_word_*_routing_*.csv',
-    f'{folder}/{sub_folder}/STTRAM/STTRAM_22_*x*_*MB_*_word_*_routing_*.csv'
+    f'{folder}/{sub_folder}/PCRAM/PCRAM_28_*x*_*_MB_*_word_*_routing_*.csv',
+    f'{folder}/{sub_folder}/ReRAM/ReRAM_28_*x*_*_MB_*_word_*_routing_*.csv',
+    f'{folder}/{sub_folder}/STTRAM/STTRAM_22_*x*_*_MB_*_word_*_routing_*.csv'
 ]
 
 #print(file_patterns)
 
 # Define regex patterns with technology names
 patterns = [
-    (r'PCRAM_28_(\d+)x(\d+)_(\d+)MB_(\d+)_word_(\d+)_routing_(\d+)\.csv', 'PCRAM'),
-    (r'ReRAM_28_(\d+)x(\d+)_(\d+)MB_(\d+)_word_(\d+)_routing_(\d+)\.csv', 'ReRAM'),
-    (r'STTRAM_22_(\d+)x(\d+)_(\d+)MB_(\d+)_word_(\d+)_routing_(\d+)\.csv', 'STTRAM')
+    (r'PCRAM_28_(\d+)x(\d+)_(\d+)_MB_(\d+)_word_(\d+)_routing_(\d+)\.csv', 'PCRAM'),
+    (r'ReRAM_28_(\d+)x(\d+)_(\d+)_MB_(\d+)_word_(\d+)_routing_(\d+)\.csv', 'ReRAM'),
+    (r'STTRAM_22_(\d+)x(\d+)_(\d+)_MB_(\d+)_word_(\d+)_routing_(\d+)\.csv', 'STTRAM')
 ]
 
 # Initialize an empty list to store dataframes

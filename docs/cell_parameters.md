@@ -1,143 +1,231 @@
--MemCellType: SRAM; DRAM; eDRAM; MRAM; PCRAM; FBRAM; memristor; SLCNAND; MLCNAND; DWM; else: SRAM (Memory cell type like MRAM, PCRAM, etc.)
+# Memory Cell Parameters
 
--MemCellLevel: MLC; TLC; else: SLC (Memory cell storage level, SLC, MLC, TLC...)
+This document describes the configuration parameters for memory cells. Each parameter is described in the following format:
 
--ProcessNode: int (Cell original process technology node, Unit: nm)
+- **Parameter Name**: Description of what the parameter represents, Unit: unit
+    Parameter Name: possible_value1; possible_value2; possible_value3; else: default_value
 
--CellArea (F^2): double (Cell area, Unit: F^2)
+## Basic cell configuration 
+- **MemCellType**: Memory cell technology type
+    MemCellType: SRAM; DRAM; eDRAM; MRAM; PCRAM; FBRAM; memristor; SLCNAND; MLCNAND; DWM; else: SRAM 
 
--CellAspectRatio: double (Cell aspect ratio, H/W, 
-                            heightInFeatureSize = sqrt(area * aspectRatio);
-			                widthInFeatureSize = sqrt(area / aspectRatio))
+- **MemCellLevel**: Memory cell storage level: SLC, MLC, TLC
+    MemCellLevel: MLC; TLC; else: SLC
 
--ResistanceOnAtSetVoltage (ohm): double (Low resistance state when set voltage is applied)
+- **ProcessNode**: Cell original process technology node, Unit: nm
+    ProcessNode: int 
 
--ResistanceOffAtSetVoltage (ohm): double (High resistance state when set voltage is applied)
+## Physical Properties
+- **CellArea (F^2)**: Cell area, Unit: F^2
+    CellArea (F^2): double
 
--ResistanceOnAtResetVoltage (ohm): double (Low resistance state when reset voltage is applied)
+- **CellAspectRatio**: Cell aspect ratio, H/W, heightInFeatureSize = sqrt(area * aspectRatio); widthInFeatureSize = sqrt(area / aspectRatio)
+    CellAspectRatio: double
 
--ResistanceOffAtResetVoltage (ohm): double (High resistance state when reset voltage is applied)
+- **ResistanceOnAtSetVoltage (ohm)**: Low resistance state when set voltage is applied, unit: ohm
+    ResistanceOnAtSetVoltage (ohm): double
 
--ResistanceOnAtReadVoltage (ohm): double (Low resistance state when read voltage is applied)
+- **ResistanceOffAtSetVoltage (ohm)**: High resistance state when set voltage is applied, unit: ohm
+    ResistanceOffAtSetVoltage (ohm): double
 
--ResistanceOffAtReadVoltage (ohm): double (High resistance state when read voltage is applied)
+- **ResistanceOnAtResetVoltage (ohm)**: Low resistance state when reset voltage is applied, unit: ohm
+   ResistanceOnAtResetVoltage (ohm): double
 
--ResistanceOnAtHalfReadVoltage (ohm): double (Low resistance state when 1/2 read voltage is applied)
+- **ResistanceOffAtResetVoltage (ohm)**: High resistance state when reset voltage is applied, unit: ohm
+    ResistanceOffAtResetVoltage (ohm): double
 
--ResistanceOffAtHalfReadVoltage (ohm): double (High resistance state when 1/2 read voltage is applied)
+- **ResistanceOnAtReadVoltage (ohm)**: Low resistance state when read voltage is applied, unit: ohm
+    ResistanceOnAtReadVoltage (ohm): double
 
--ResistanceOnAtHalfResetVoltage (ohm): double (Low resistance state when 1/2 reset voltage is applied)
+- **ResistanceOffAtReadVoltage (ohm)**: High resistance state when read voltage is applied, unit: ohm 
+    ResistanceOffAtReadVoltage (ohm): double
 
--ResistanceOn (ohm): double (Turn-on resistance)
+- **ResistanceOnAtHalfReadVoltage (ohm)**: Low resistance state when 1/2 read voltage is applied, unit: ohm
+    ResistanceOnAtHalfReadVoltage (ohm): double
 
--ResistanceOff (ohm): double (Turn-off resistance)
+- **ResistanceOffAtHalfReadVoltage (ohm)**: High resistance state when 1/2 read voltage is applied, unit: ohm
+    ResistanceOffAtHalfReadVoltage (ohm): double
 
--CapacitanceOn (F): double (Cell capacitance when memristor is on)
+- **ResistanceOnAtHalfResetVoltage (ohm)**: Low resistance state when 1/2 reset voltage is applied, unit: ohm
+    ResistanceOnAtHalfResetVoltage (ohm): double 
 
--CapacitanceOff (F): double (Cell capacitance when memristor is off)
+- **ResistanceOn (ohm)**: Turn-on resistance, unit: ohm
+    ResistanceOn (ohm): double
 
--GateOxThicknessFactor: double (The oxide thickness of FBRAM could be larger than the traditional SOI MOS)
+- **ResistanceOff (ohm)**: Turn-off resistance, unit: ohm
+    ResistanceOff (ohm): double
 
--SOIDeviceWidth (F): double (The gate width of SOI device as FBRAM)
+- **CapacitanceOn (F)**: Cell capacitance when memristor is on, unit: F
+    CapacitanceOn (F): double
 
--ReadMode: voltage; else: current (true = voltage-mode, false = current-mode)
+- **CapacitanceOff (F)**: Cell capacitance when memristor is off, unit: F
+    CapacitanceOff (F): double
 
--ReadVoltage (V): double (Read voltage)
+- **ReadMode** : voltage-mode or current-mode
+    ReadMode: voltage; else: current (true = voltage-mode, false = current-mode)
 
--ReadCurrent (uA): double (Read current)
+- **ReadVoltage (V)**: Read voltage, unit: V
+    ReadVoltage (V): double
 
--ReadPower (uW): double (Read power per bitline (uW))
+- **ReadCurrent (uA)**: Read current, unit: uA
+    ReadCurrent (uA): double
 
--ReadPulse (ns): double (Read pulse)
+- **ReadPower (uW)**: Read power per bitline, unit: uW
+    ReadPower (uW): double
 
--WordlineBoostRatio: double (TO-DO: function not realized: ratio of boost wordline voltage to vdd)
+- **ReadPulse (ns)**: Read pulse, unit: ns
+    ReadPulse (ns): double
 
--MinSenseVoltage (mV): double (Minimum sense voltage)
+- **WordlineBoostRatio**: TO-DO: function not realized: ratio of boost wordline voltage to vdd, ssems not to work?
+    WordlineBoostRatio: double
 
--ResetMode: voltage; else: current (true = voltage-mode, false = current-mode)
+- **MinSenseVoltage (mV)**: Minimum sense voltage, unit: mV
+    MinSenseVoltage (mV): double
 
--ResetVoltage (V): "vdd" or double : string/double (Reset voltage) 
-                    If value is "vdd", it means the reset voltage should be set to a predefined voltage level stored in tech->vdd. This is a special case where the reset voltage is tied to a technology-specific voltage level, likely defined elsewhere in the program. If tmp is not "vdd",floating-point number directly goes into resetVoltage. 
+- **ResetMode**: voltage-mode or current-mode
+    ResetMode: voltage; else: current (true = voltage-mode, false = current-mode)
 
+- **ResetVoltage (V)**: Reset voltage, unit: V
+    If value is "vdd", it means the reset voltage should be set to a predefined voltage level stored in tech->vdd. This is a special case where the reset voltage is tied to a technology-specific voltage level, likely defined elsewhere in the program. If tmp is not "vdd",floating-point number directly goes into resetVoltage. 
+    ResetVoltage (V): "vdd" or double : string/double (Reset voltage) 
+                   
+- **ResetCurrent (uA)**: Reset current, unit: uA
+    ResetCurrent (uA): double
 
--ResetCurrent (uA): double (Reset current)
+- **ResetPulse (ns)**: Reset pulse duration, unit: ns
+    ResetPulse (ns): double
 
--ResetPulse (ns): double (Reset pulse duration (ns))
+- **ResetEnergy (pJ)**: Reset energy per cell, unit: pJ
+    ResetEnergy (pJ): double
 
--ResetEnergy (pJ): double (Reset energy per cell (pJ))
+- **SoftResetVoltage (V)**: same as in the ResetVolatege, unit: V
+    SoftResetVoltage (V): "vdd" or double
 
--SoftResetVoltage (V): "vdd" or double (Reset voltage) as in the ResetVolatege
+- **SoftResetCurrent (uA)**: Reset current, unit: uA
+    SoftResetCurrent (uA): double
 
--SoftResetCurrent (uA): double (Reset current)
+- **SoftResetPulse (ns)**: Reset pulse duration, unit: ns
+    SoftResetPulse (ns): double
 
--SoftResetPulse (ns): double (Reset pulse duration (ns))
+- **SoftResetEnergy (pJ)**: Reset energy per cell, unit: pJ
+    SoftResetEnergy (pJ): double
 
--SoftResetEnergy (pJ): double (Reset energy per cell (pJ))
+- **SetMode**: voltage-mode or current-mode
+    SetMode: voltage; else: current (true = voltage-mode, false = current-mode)
 
--SetMode: voltage; else: current (true = voltage-mode, false = current-mode)
+- **SetVoltage (V)**: Set voltage; rules same as in the ResetVolatege, unit: V
+    SetVoltage (V): "vdd" or double
 
--SetVoltage (V): "vdd" or double : (Set voltage) "vdd" or double (Reset voltage) as in the ResetVolatege
+- **SetCurrent (uA)**: Set current, unit: uA
+    SetCurrent (uA): double
 
--SetCurrent (uA): double (Set current)
+- **SetPulse (ns)**: Set pulse duration, unit: ns
+    SetPulse (ns): double
 
--SetPulse (ns): double (Set pulse duration (ns))
+- **SetEnergy (pJ)**: Set energy per cell, unit: pJ
+    SetEnergy (pJ): double
 
--SetEnergy (pJ): double (Set energy per cell (pJ))
+- **SoftSetVoltage (V)**: SoftSet voltage rules the same as in the ResetVolatege, unit: V
+    SoftSetVoltage (V): "vdd" or double
 
--SoftSetVoltage (V): "vdd" or double : (Set voltage) "vdd" or double (Reset voltage) as in the ResetVolatege
+- **SoftSetCurrent (uA)**: Softset current, unit: uA
+    SoftSetCurrent (uA): double
 
--SoftSetCurrent (uA): double (Set current)
+- **SoftSetPulse (ns)**: Set pulse duration, unit: ns
+    SoftSetPulse (ns): double
 
--SoftSetPulse (ns): double (Set pulse duration (ns))
+- **SoftSetEnergy (pJ)**: Set energy per cell, unit: pJ
+    SoftSetEnergy (pJ): double
 
--SoftSetEnergy (pJ): double (Set energy per cell (pJ))
+- **AverageIterations**: ignored for SLC
+    AverageIterations: double
 
--AverageIterations: doube (ignored for SLC)
+- **Interval (ns)**: ignored for SLC, unit: ns
+    Interval (ns): double
 
--Interval (ns): double (ignored for SLC)
+- **Stitching**: (If non-zero, add stitching overhead for every x cells)
+    Stitching: int
 
--Stitching: int (If non-zero, add stitching overhead for every x cells)
+- **AccessType**: Cell access type: CMOS, BJT, or diode, none means that DESTINY chooses best AccessType
+    AccessType: CMOS; BJT; diode; else: none
 
--AccessType: CMOS; BJT; diode; else: none (Cell access type: CMOS, BJT, or diode, none means that DESTINY chooses best AccessType)
+- **AccessCMOSWidth (F)**: The input of CMOS access transistor width is ignored because the cell is not CMOS-accessed.
+    AccessCMOSWidth (F): double
 
--AccessCMOSWidth (F): double (The input of CMOS access transistor width is ignored because the cell is not CMOS-accessed.)
+- **VoltageDropAccessDevice (V)**:  Voltage drop in acess device
+    VoltageDropAccessDevice (V): double 
 
--VoltageDropAccessDevice (V): double 
+- **LeakageCurrentAccessDevice (uA)**: Leakage current access device
+    LeakageCurrentAccessDevice (uA): double 
 
--LeakageCurrentAccessDevice (uA): double 
+## FBRAM
 
--DRAMCellCapacitance (F): double (only for DRAM)
+- **GateOxThicknessFactor**: FBRAM: The oxide thickness of FBRAM could be larger than the traditional SOI MOS
+    GateOxThicknessFactor: double
 
--SRAMCellNMOSWidth (F): double (only for SRAM)
+- **SOIDeLviceWidth (F)**: FBRAM: The gate width of SOI device as FBRAM
+    SOIDeLviceWidth (F): double
 
--SRAMCellPMOSWidth (F): double (only for SRAM)
+## DRAM
 
--ReadFloating: true (else is false)
+- **DRAMCellCapacitance (F)**: only for DRAM, unit: F
+    DRAMCellCapacitance (F): double 
 
--FlashEraseVoltage (V): double (The erase voltage, Unit: V, highest W/E voltage in ITRS sheet, only for flash)
+## eDRAM
 
--FlashProgramVoltage (V): double (The program voltage, Unit: V, only for flash)
+- **RetentionTime (us)**: Only for eDRAM, Cell time to data loss, unit: us
+    RetentionTime (us): double
 
--FlashPassVoltage (V): double (The voltage applied on the unselected wordline within the same block during programming, Unit: V, only for flash)
+- **Temperature (K)**: Only for eDRAM, temperature for which the cell input values are valid, unit: K
+    Temperature (K): double 
 
--FlashEraseTime (ms): double (The flash erase time, Unit: s, only for flash)
+## SRAM
 
--FlashProgramTime (us): double (The SLC flash program time, Unit: s, only for flash)
+- **SRAMCellNMOSWidth (F)**: only for SRAM
+    SRAMCellNMOSWidth (F): double
 
--GateCouplingRatio: double (The ratio of control gate to total floating gate capacitance, only for flash)
+- **SRAMCellPMOSWidth (F)**: only for SRAM
+    SRAMCellPMOSWidth (F): double
 
--RetentionTime (us): double (Cell time to data loss (us), only for eDRAM)
+## FLASH
 
--Temperature (K): double (Temperature for which the cell input values are valid , only for eDRAM)
+- **ReadFloating**:
+    ReadFloating: true (else is false)
 
--TapeLength (bit): double (only for DWM)
+- **FlashEraseVoltage (V)**: Only for flash: The erase voltage, Unit: V, highest W/E voltage in ITRS sheet
+    FlashEraseVoltage (V): double
 
--PortDistance (bit): double (only for DWM)
+- **FlashProgramVoltage (V)**: Only for flash: the program voltage, unit: V
+    FlashProgramVoltage (V): double
 
--TapePerGroup: double (only for DWM)
+- **FlashPassVoltage (V)**: Only for flash: the voltage applied on the unselected wordline within the same block during programming, unit: V
+    FlashPassVoltage (V): double
 
--ShiftCurrent (uA): double (only for DWM)
+- **FlashEraseTime (ms)**: Only for flash: the flash erase time, unit: s
+    FlashEraseTime (ms): double
 
--ShiftPulse (ns): double (only for DWM)
+- **FlashProgramTime (us)**: Only for flash, the SLC flash program time, unit: s
+    FlashProgramTime (us): double
 
--ShiftEnergy (pJ): double (only for DWM)
+- **GateCouplingRatio**: Only for flash, The ratio of control gate to total floating gate capacitance
+    GateCouplingRatio: double 
+
+## DWM 
+
+- **TapeLength (bit)**: Only for DWM, in bits 
+    TapeLength (bit): double
+
+- **PortDistance (bit)**: Only for DWM, in bit
+    PortDistance (bit): double
+
+- **TapePerGroup**: Only for DWM
+    TapePerGroup: double
+
+- **ShiftCurrent (uA)**: only for DWM, unit: uA
+    ShiftCurrent (uA): double
+
+- **ShiftPulse (ns)**: only for DWM, unit: ns
+    ShiftPulse (ns): double
+
+- **ShiftEnergy (pJ)**: only for DWM, unit: pJ
+    ShiftEnergy (pJ): double

@@ -23,6 +23,8 @@ DESTINY can model:
 
 For more details refer to [DESTINY publication](docs/literature/2015_DESTINY%20-%20A%20Comprehensive%20Tool%20with%203D%20and%20Multi-Level%20Cell%20Memory%20Modeling%20Capability.pdf)
 
+Source code repository: [DESTINY](https://bitbucket.org/sparsh_mittal/destiny_v2/src/master/)
+
 ## Installation
 
 DESTINY is developed in C++ and can be compiled on both Microsoft Windows and Unix-like operating systems.
@@ -60,6 +62,14 @@ $ ../destiny <file.cfg>
 Assuming that <file>.cfg is present in the topfolder/config folder, whereas "destiny" binary is present in "topfolder".
 Remember: .cfg file can refer to the another .cell file, so the exact path for .cell file needs to be provided in .cfg file. 
 
+## Configuration files
+
+DESTINY simulator uses two types of configuration files:
+- Main configuration file (`.cfg`) - contains simulation parameters
+- Cell configuration file (`.cell`) - contains memory cell technology parameters
+
+For detailed information about configuration parameters, see [Configuration Guide](config/README.md)
+
 ## Running First Simulation
 
 To develop your first simulation:
@@ -77,6 +87,31 @@ To develop your first simulation:
      - Terminal output
      - Single .csv file (stored in `/results/type-of-technology`)
    - For multiple simulations, use our [dataset concatenation script](scripts/dataset_concatenate.py)
+
+## Results File Naming Convention
+
+Each output file is saved as a CSV with the following naming pattern:
+```[outputFilePrefix]_[capacity]_MB_[n]_word_[optimizationTarget]_routing_[routingMode].csv```
+
+### Format Breakdown:
+- `outputFilePrefix`: Base name for the output file defined in the configuration file
+- `capacity`: Memory capacity in MB
+- `n`: Word size in bits
+- `optimizationTarget`: Optimization metric used in the configuration file
+- `routingMode`: Mode of routing selected
+
+### Example:
+
+destiny_output_16_MB_32_1_routing_1
+
+This example represents:
+- outputFilePrefix: destiny_output
+- capacity: 16 MB
+- n word size: 32 bits
+- optimization target: 1 (coresponds to Area)
+- routing mode: H-tree (0 means Bus)
+
+to see complete list of possible parameters refer to: [Configuration Parameters](#configuration-parameters)
 
 ## Result Processing
 The dataset concatenation script requires:
