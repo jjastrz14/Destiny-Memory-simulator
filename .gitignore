@@ -4,6 +4,8 @@
 
 # Result repository
 /results/
+/config/config_DATE/
+/config/config_nimble/
 
 # Binary
 /destiny
